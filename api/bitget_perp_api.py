@@ -22,6 +22,7 @@ class BitgetPerpApi(AccountBase):
         self._https_client = None
         self._get_header = None
         self._post_header = None
+        self.set_key_info()
         self.init_https_connection()
 
     def set_key_info(self):
