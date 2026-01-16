@@ -19,6 +19,7 @@ class BitgetPerpApi(AccountBase):
         self._host_address = "api.bitget.com"
         self._secret_key = None
         self._format_symbol = self.format_symbol()
+        self._https_client = None
         self._get_header = None
         self._post_header = None
 
