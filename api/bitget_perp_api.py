@@ -22,6 +22,7 @@ class BitgetPerpApi(AccountBase):
         self._https_client = None
         self._get_header = None
         self._post_header = None
+        self.init_https_connection()
 
     def set_key_info(self):
         _access_key, _secret_key, _pass_phrase = self._get_key_info(keys_collection=HFT_KEYS_COLLECTION, strategy_name="HFT")
@@ -46,6 +47,20 @@ class BitgetPerpApi(AccountBase):
             return self._symbol.replace('_', "").upper()
         else:
             return symbol.replace('_', "").upper()
+
+    def init_https_connection(self):
+        """
+        初始化https连接 [仅仅支持https]
+        :return:
+        """
+        if self._https_client:
+            self._https_client.close()
+        if self._run_env != "test":
+            https_conn = http.client.HTTPSConnection(self._host_address, timeout=10)
+        else:
+            https_conn = http.client.HTTPSConnection("127.0.0.1", port=10809, timeout=10)
+            https_conn.set_tunnel(self._host_address)
+        self._https_client = https_conn
 
     def get_position_info(self):
         path = f"/api/v2/mix/position/single-position?productType=USDT-FUTURES&symbol={self._format_symbol}"
