@@ -71,6 +71,7 @@ class BitgetPerpApi(AccountBase):
         path = f"/api/v2/mix/position/single-position?productType=USDT-FUTURES&symbol={self._format_symbol}"
         return self.http_get(path)
 
+# http 请求
     def http_get(self, path):
         timestamp = str(int(time.time() * 1000))
         self._get_header['ACCESS-SIGN'] = base64.b64encode(hmac.new(self._secret_key, (timestamp + "GET" + path).encode(),digestmod=hashlib.sha256).digest())
@@ -80,3 +81,4 @@ class BitgetPerpApi(AccountBase):
         body = response.read()
         json_data = orjson.loads(body)
         return json_data
+# endregion
