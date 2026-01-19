@@ -70,17 +70,15 @@ class BitgetPerpApi(AccountBase):
         self._https_client = https_conn
 
 # endregion
-    def make_open_order(self, price, vol, side):
+    def make_open_order(self, p_price, p_vol, p_side):
         """
         开仓
-        :param price:
-        :param vol:
-        :param side:
+        :param p_price:
+        :param p_vol:
+        :param p_side:
         :return:
         """
-        p_side = self._side_dic[order['p_side']]
         reduce_only = self._reduce_only_dic[order['reduce_only']]
-
         body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{order['p_vol']},"price":"{order['p_price']}","side":"{p_side}","orderType":"limit","reduceOnly":"{reduce_only}","clientOid":"{order['p_client_id']}"}}'.encode()
         return self.__socket_post(body)
 
@@ -94,6 +92,16 @@ class BitgetPerpApi(AccountBase):
         self._get_header['ACCESS-SIGN'] = base64.b64encode(hmac.new(self._secret_key, (timestamp + "GET" + path).encode(),digestmod=hashlib.sha256).digest())
         self._get_header['ACCESS-TIMESTAMP'] = timestamp
         self._https_client.request(method="GET", url=path, headers=self._get_header)
+        response = self._https_client.getresponse()
+        body = response.read()
+        json_data = orjson.loads(body)
+        return json_data
+
+    def http_post(self, path, params):
+        timestamp = str(int(time.time() * 1000))
+        self._post_header['ACCESS-SIGN'] = base64.b64encode(hmac.new(self._secret_key, (timestamp + "POST" + path + params).encode(),digestmod=hashlib.sha256).digest())
+        self._post_header['ACCESS-TIMESTAMP'] = timestamp
+        self._https_client.request(method="POST", url=path, body=params, headers=self._post_header)
         response = self._https_client.getresponse()
         body = response.read()
         json_data = orjson.loads(body)
