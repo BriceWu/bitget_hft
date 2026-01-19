@@ -78,7 +78,7 @@ class BitgetPerpApi(AccountBase):
         :param p_side:
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{order['p_vol']},"price":"{order['p_price']}","side":"{p_side}","orderType":"limit","clientOid":"{order['p_client_id']}"}}'.encode()
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{order['p_client_id']}"}}'.encode()
         return self.http_post("/api/v2/mix/order/place-order", body)
 
     def make_close_order(self, p_price, p_vol, p_side):
