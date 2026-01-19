@@ -120,6 +120,29 @@ class BitgetPerpApi(AccountBase):
         })
         return self.http_post(path, params)
 
+    def change_margin_mode(self, margin_mode="isolated"):
+        path = "/api/v2/mix/account/set-margin-mode"
+        params = json.dumps({
+            "symbol": self._format_symbol,
+            "productType": PRODUCTTYPE,
+            "marginCoin": MARGINCOIN,
+            "marginMode": margin_mode
+        })
+        return self.http_post(path, params)
+
+    def change_position_mode(self, posi_mode="one_way_mode"):
+        """
+        设置仓位模式 单向持仓/双向持仓
+        :param posi_mode: one_way_mode 单向持仓/hedge_mode 双向持仓
+        :return:
+        """
+        path = "/api/v2/mix/account/set-position-mode"
+        params = json.dumps({
+            "productType": PRODUCTTYPE,
+            "posMode": posi_mode
+        })
+        return self.http_post(path, params)
+
     def get_position_info(self):
         path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin={MARGINCOIN}"
         return self.http_get(path)
