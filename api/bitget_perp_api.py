@@ -121,7 +121,7 @@ class BitgetPerpApi(AccountBase):
         return self.http_post(path, params)
 
     def get_position_info(self):
-        path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin=USDT"
+        path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin={MARGINCOIN}"
         return self.http_get(path)
 
 # http 请求
