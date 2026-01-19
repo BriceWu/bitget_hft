@@ -89,7 +89,7 @@ class BitgetPerpApi(AccountBase):
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
     _symbol = "btc_usdt"
-    _mark = "aaa"
+    _mark = "xyz369free"
     _logger = zm_log.get_log("%s_%s" % (_symbol, _mark))
     b = BitgetPerpApi(_symbol, _logger)
     b.get_position_info()
