@@ -12,9 +12,10 @@ from config import HFT_KEYS_COLLECTION, HFT_ACCOUNT_COLLECTION
 
 
 class BitgetPerpApi(AccountBase):
-    def __init__(self, symbol, logger):
+    def __init__(self, symbol, mark, logger):
         AccountBase.__init__(self)
         self._symbol = symbol
+        self._mark = mark
         self._logger = logger
         if logger is None:
             raise Exception("日志对象未初始化")
@@ -91,5 +92,5 @@ if __name__ == '__main__':
     _symbol = "doge_usdt"
     _mark = "xyz369free"
     _logger = zm_log.get_log("%s_%s" % (_symbol, _mark))
-    b = BitgetPerpApi(_symbol, _logger)
+    b = BitgetPerpApi(_symbol, _mark, _logger)
     b.get_position_info()
