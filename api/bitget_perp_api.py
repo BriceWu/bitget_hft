@@ -70,26 +70,28 @@ class BitgetPerpApi(AccountBase):
         self._https_client = https_conn
 
 # endregion
-    def make_open_order(self, p_price, p_vol, p_side):
+    def make_open_order(self, p_price, p_vol, p_side, p_client_id):
         """
         开仓
         :param p_price:
         :param p_vol:
         :param p_side:
+        :param p_client_id:
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{order['p_client_id']}"}}'.encode()
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{p_client_id}"}}'.encode()
         return self.http_post("/api/v2/mix/order/place-order", body)
 
-    def make_close_order(self, p_price, p_vol, p_side):
+    def make_close_order(self, p_price, p_vol, p_side, p_client_id):
         """
         开仓
         :param p_price:
         :param p_vol:
         :param p_side:
+        :param p_client_id:
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES","clientOid":"{order['p_client_id']}"}}'.encode()
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES","clientOid":"{p_client_id}"}}'.encode()
         return self.http_post("/api/v2/mix/order/place-order", body)
 
     def get_position_info(self):
