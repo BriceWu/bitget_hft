@@ -3,6 +3,7 @@
 import time
 import orjson, json
 import base64
+from zmqfsi.util.zm_env import RunEnv
 import hmac, hashlib, http.client
 import zmqfsi.util.zm_log as zm_log
 from zmqfsi.util.zm_client import ZMClient
@@ -85,6 +86,7 @@ class BitgetPerpApi(AccountBase):
 # endregion
 
 if __name__ == '__main__':
+    RunEnv.set_run_env('test')
     _symbol = "btc_usdt"
     _mark = "aaa"
     _logger = zm_log.get_log("%s_%s" % (_symbol, _mark))
