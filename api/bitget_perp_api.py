@@ -11,6 +11,7 @@ from bit1024.account.base import AccountBase
 from config import HFT_KEYS_COLLECTION, HFT_ACCOUNT_COLLECTION
 
 PRODUCTTYPE = "USDT-FUTURES"
+MARGINCOIN = "USDT"
 
 
 class BitgetPerpApi(AccountBase):
