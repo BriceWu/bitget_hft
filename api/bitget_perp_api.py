@@ -115,7 +115,7 @@ class BitgetPerpApi(AccountBase):
         params = json.dumps({
             "symbol": _format_symbol,
             "productType": PRODUCTTYPE,
-            "marginCoin": self._margin_coin,
+            "marginCoin": MARGINCOIN,
             "leverage": leverage
         })
         return self.http_post(path, params)
