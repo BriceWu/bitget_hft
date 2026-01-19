@@ -143,6 +143,33 @@ class BitgetPerpApi(AccountBase):
         })
         return self.http_post(path, params)
 
+    def get_open_orders(self, symbol=None):
+        """
+        查询50单
+        :return:
+        """
+        if symbol is None:
+            format_symbol = self._format_symbol
+        else:
+            format_symbol = self.format_symbol(symbol)
+        path = f"/api/v2/mix/order/orders-pending?symbol={format_symbol}&productType={PRODUCTTYPE}&limit=50"
+        return self.http_get(path)
+
+    def cancel_open_orders(self, order_id_list):
+        """
+        最大50单
+        :param order_id_list:
+        :return:
+        """
+        path = "/api/v2/mix/order/batch-cancel-orders"
+        params = {
+            "orderIdList": order_id_list,
+            "symbol": self._format_symbol,
+            "productType": PRODUCTTYPE,
+            "marginCoin": MARGINCOIN
+        }
+        return self.http_post(path, json.dumps(params))
+
     def get_position_info(self):
         path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin={MARGINCOIN}"
         return self.http_get(path)
