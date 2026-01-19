@@ -10,6 +10,8 @@ from zmqfsi.util.zm_client import ZMClient
 from bit1024.account.base import AccountBase
 from config import HFT_KEYS_COLLECTION, HFT_ACCOUNT_COLLECTION
 
+PRODUCTTYPE = "USDT-FUTURES"
+
 
 class BitgetPerpApi(AccountBase):
     def __init__(self, symbol, mark, logger):
@@ -98,13 +100,27 @@ class BitgetPerpApi(AccountBase):
         path = "/api/v2/mix/order/cancel-order"
         params = json.dumps({
             "symbol": self._format_symbol,
-            "productType": "USDT-FUTURES",
+            "productType": PRODUCTTYPE,
             "clientOid": p_client_id
         })
         return self.http_post(path, params)
 
+    def adjust_leverage(self, leverage, symbol=None):
+        path = "/api/v2/mix/account/set-leverage"
+        if symbol is None:
+            _format_symbol = self._format_symbol
+        else:
+            _format_symbol = self.format_symbol(symbol)
+        params = json.dumps({
+            "symbol": _format_symbol,
+            "productType": PRODUCTTYPE,
+            "marginCoin": self._margin_coin,
+            "leverage": leverage
+        })
+        return self.http_post(path, params)
+
     def get_position_info(self):
-        path = f"/api/v2/mix/position/single-position?productType=USDT-FUTURES&symbol={self._format_symbol}&marginCoin=USDT"
+        path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin=USDT"
         return self.http_get(path)
 
 # http 请求
