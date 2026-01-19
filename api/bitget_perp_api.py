@@ -94,12 +94,12 @@ class BitgetPerpApi(AccountBase):
         body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES","clientOid":"{p_client_id}"}}'.encode()
         return self.http_post("/api/v2/mix/order/place-order", body)
 
-    def cancel_order(self, client_id):
+    def cancel_order(self, p_client_id):
         path = "/api/v2/mix/order/cancel-order"
         params = json.dumps({
             "symbol": self._format_symbol,
             "productType": "USDT-FUTURES",
-            "clientOid": client_id
+            "clientOid": p_client_id
         })
         return self.http_post(path, params)
 
