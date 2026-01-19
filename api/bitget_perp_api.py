@@ -72,7 +72,7 @@ class BitgetPerpApi(AccountBase):
 # endregion
 
     def get_position_info(self):
-        path = f"/api/v2/mix/position/single-position?productType=USDT-FUTURES&symbol={self._format_symbol}"
+        path = f"/api/v2/mix/position/single-position?productType=USDT-FUTURES&symbol={self._format_symbol}&marginCoin=USDT"
         return self.http_get(path)
 
 # http 请求
