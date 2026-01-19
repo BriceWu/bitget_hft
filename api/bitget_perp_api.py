@@ -8,7 +8,7 @@ import hmac, hashlib, http.client
 import zmqfsi.util.zm_log as zm_log
 from zmqfsi.util.zm_client import ZMClient
 from bit1024.account.base import AccountBase
-from config import HFT_KEYS_COLLECTION
+from config import HFT_KEYS_COLLECTION, HFT_ACCOUNT_COLLECTION
 
 
 class BitgetPerpApi(AccountBase):
@@ -30,6 +30,7 @@ class BitgetPerpApi(AccountBase):
 # region 初始化
 
     def set_key_info(self):
+        self._set_account_msg(account_collection=HFT_ACCOUNT_COLLECTION, strategy_name="HFT")
         _access_key, _secret_key, _pass_phrase = self._get_key_info(keys_collection=HFT_KEYS_COLLECTION, strategy_name="HFT")
         self._secret_key = _secret_key.encode()
         self._get_header = {
