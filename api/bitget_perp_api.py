@@ -4,6 +4,7 @@ import time
 import orjson, json
 import base64
 import hmac, hashlib, http.client
+import zmqfsi.util.zm_log as zm_log
 from zmqfsi.util.zm_client import ZMClient
 from bit1024.account.base import AccountBase
 from config import HFT_KEYS_COLLECTION
@@ -82,3 +83,10 @@ class BitgetPerpApi(AccountBase):
         json_data = orjson.loads(body)
         return json_data
 # endregion
+
+if __name__ == '__main__':
+    _symbol = "btc_usdt"
+    _mark = "aaa"
+    _logger = zm_log.get_log("%s_%s" % (_symbol, _mark))
+    b = BitgetPerpApi(_symbol, _logger)
+    b.get_position_info()
