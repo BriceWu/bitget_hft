@@ -13,17 +13,19 @@ BASE_VOLUME_DICT = {
 
 
 class VolumeMonitor(ZMBase):
-    def __init__(self, symbol, volume_rate):
+    def __init__(self, symbol, volume_rate, trade_side):
         """
         初始化
         :param symbol: 交易对
         :param volume_rate: 量比
+        :param trade_side: 交易方向
         """
         ZMBase.__init__(self)
         self._symbol = symbol
         self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}')
         self._public_rest_api = None
         self._volume_rate = volume_rate
+        self._trade_side = trade_side
         self._base_vol = 0
 
     def init_params(self):
