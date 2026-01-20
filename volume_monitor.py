@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback
+import traceback, socket, http.client, time
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
@@ -34,7 +34,25 @@ class VolumeMonitor(ZMBase):
             raise
 
     def start(self):
-        pass
+        while True:
+            try:
+                pass
+            except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
+                open_positions_flag = True
+                err_msg = repr(e)
+                self._logger.error(err_msg)
+                self.send_wechat(self._mail_to, f"Arbitrage Exception[{self._server}]", err_msg)
+                error_info = "%s,%s" % (e, traceback.format_exc())
+                self._logger.error(error_info)
+                self._rest_api.init_https_connection()
+            except Exception as e:
+                open_positions_flag = True
+                error_info = "%s,%s" % (e, traceback.format_exc())
+                self._logger.error(error_info)
+                self.send_wechat(self._mail_to, f'Arbitrage Exception[{self._server}]', error_info)
+                # 重建http连接
+                self._rest_api.init_https_connection()
+                time.sleep(60)
 
 
 if __name__ == '__main__':
