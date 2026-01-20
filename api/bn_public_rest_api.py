@@ -50,24 +50,16 @@ class BinancePublicPerpApi(ZMBase):
         self._https_client = https_conn
 
 # endregion
-    def make_open_order(self, p_price, p_vol, p_side, p_client_id):
+    def get_continuous_klines(self):
         """
-        开仓
-        :param p_price:
-        :param p_vol:
-        :param p_side:
-        :param p_client_id:
+        获取连续K线
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{p_client_id}"}}'.encode()
-        return self.http_post("/api/v2/mix/order/place-order", body)
+        return self.http_get(f"/fapi/v1/continuousKlines?pair={self._format_symbol}")
 
 # http 请求
     def http_get(self, path):
-        timestamp = str(int(time.time() * 1000))
-        self._get_header['ACCESS-SIGN'] = base64.b64encode(hmac.new(self._secret_key, (timestamp + "GET" + path).encode(),digestmod=hashlib.sha256).digest())
-        self._get_header['ACCESS-TIMESTAMP'] = timestamp
-        self._https_client.request(method="GET", url=path, headers=self._get_header)
+        self._https_client.request(method="GET", url=path)
         response = self._https_client.getresponse()
         body = response.read()
         json_data = orjson.loads(body)
