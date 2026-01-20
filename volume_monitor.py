@@ -47,6 +47,16 @@ class VolumeMonitor(ZMBase):
                 last_time = self.pace_cycle(last_time, cyc_time=1)
                 klines = self._public_rest_api.get_klines()
                 vol0 = float(klines[0][5])
+                if vol0 < self._base_vol * 0.2:
+                    self._trade_side = 0
+                else:
+                    ratio = float(klines[0][9]) / vol0
+                    if ratio > 0.8:
+                        self._trade_side = 1  # 主动买入占超80%
+                    elif ratio < 0.2:
+                        self._trade_side = -1  # 主动卖出占80%
+                    else:
+                        self._trade_side = 0
                 vol1 = float(klines[1][5])
                 volume = max(vol0, vol1)
                 _volume_rate = volume / self._base_vol
