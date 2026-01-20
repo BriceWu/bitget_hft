@@ -59,12 +59,9 @@ class VolumeMonitor(ZMBase):
                         self._trade_side = 0
                 vol1 = float(klines[1][5])
                 volume = max(vol0, vol1)
-                _volume_rate = volume / self._base_vol
-                if _volume_rate == self._volume_rate:
+                self._volume_rate = volume / self._base_vol
+                if self._volume_rate < 0.8:
                     time.sleep(3)
-                else:
-                    self._volume_rate = _volume_rate
-                    # self._logger.info(self._volume_rate)
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
