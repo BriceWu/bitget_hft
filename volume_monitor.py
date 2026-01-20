@@ -50,7 +50,7 @@ class VolumeMonitor(ZMBase):
                 self.send_wechat(self._mail_to, 'VolumeMonitor Exception2', error_info)
                 # 重建http连接
                 self._rest_api.init_https_connection()
-                time.sleep(60)
+                time.sleep(10)
 
 
 if __name__ == '__main__':
