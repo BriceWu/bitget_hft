@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback, socket, http.client, time
+import traceback, socket, http.client, time, json
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
@@ -44,6 +44,8 @@ class VolumeMonitor(ZMBase):
             try:
                 last_time = self.pace_cycle(last_time, cyc_time=1)
                 klines = self._public_rest_api.get_klines()
+                volume = max(float(klines[0][5]), float(klines[1][5]))
+                self._volume_rate = volume / self._base_vol
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
