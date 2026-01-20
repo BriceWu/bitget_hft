@@ -22,14 +22,14 @@ class VolumeMonitor(ZMBase):
         ZMBase.__init__(self)
         self._symbol = symbol
         self._logger = zm_log.get_log(self._symbol)
-        self._rest_api = None
+        self._public_rest_api = None
         self._volume_rate = volume_rate
         self._base_vol = 0
 
     def init_params(self):
         try:
             self._base_vol = BASE_VOLUME_DICT[self._symbol]
-            self._rest_api = BinancePublicPerpApi(self._symbol, self._logger)
+            self._public_rest_api = BinancePublicPerpApi(self._symbol, self._logger)
             return
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
@@ -38,22 +38,24 @@ class VolumeMonitor(ZMBase):
             raise
 
     def start(self):
+        last_time = time.time()
         while True:
             try:
-                pass
+                last_time = self.pace_cycle(last_time, cyc_time=1)
+                self._public_rest_api.get_ticks()
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
                 self.send_wechat(self._mail_to, "VolumeMonitor Exception1", err_msg)
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.error(error_info)
-                self._rest_api.init_https_connection()
+                self._public_rest_api.init_https_connection()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.error(error_info)
                 self.send_wechat(self._mail_to, 'VolumeMonitor Exception2', error_info)
                 # 重建http连接
-                self._rest_api.init_https_connection()
+                self._public_rest_api.init_https_connection()
                 time.sleep(10)
 
 
