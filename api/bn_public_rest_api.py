@@ -54,7 +54,7 @@ class BinancePublicPerpApi(ZMBase):
         获取连续K线
         :return:
         """
-        return self.http_get(f"/fapi/v1/continuousKlines?pair={self._format_symbol}&contractType=PERPETUAL&interval=1&limit=3")
+        return self.http_get(f"/fapi/v1/continuousKlines?pair={self._format_symbol}&contractType=PERPETUAL&interval=1m&limit=3")
 
 # http 请求
     def http_get(self, path):
