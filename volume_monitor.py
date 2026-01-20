@@ -24,6 +24,7 @@ class VolumeMonitor(ZMBase):
     def init_params(self):
         try:
             self._rest_api = BinancePublicPerpApi(self._symbol, self._logger)
+            return 
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
             self._logger.error(error_info)
