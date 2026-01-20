@@ -10,7 +10,7 @@ import zmqfsi.util.zm_log as zm_log
 
 
 
-class BitgetPerpApi(ZMBase):
+class BinancePublicPerpApi(ZMBase):
     def __init__(self, symbol, logger):
         ZMBase.__init__(self)
         self._symbol = symbol
