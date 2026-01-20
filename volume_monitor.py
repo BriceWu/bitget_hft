@@ -1,5 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
+import traceback
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
@@ -21,7 +22,11 @@ class VolumeMonitor(ZMBase):
         self._volume_rate = volume_rate
 
     def init_params(self):
-        self._rest_api = BinancePublicPerpApi(self._symbol, self._logger)
+        try:
+            self._rest_api = BinancePublicPerpApi(self._symbol, self._logger)
+        except Exception as e:
+            error_info = "%s,%s" % (e, traceback.format_exc())
+            self._logger.error(error_info)
 
     def start(self):
         pass
@@ -30,5 +35,5 @@ class VolumeMonitor(ZMBase):
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
     _symbol = "doge_usdt"
-    b = VolumeMonitor(_symbol)
-    b.get_continuous_klines()
+    b = VolumeMonitor(_symbol, None)
+    b.start()
