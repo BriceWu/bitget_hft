@@ -50,7 +50,7 @@ class VolumeMonitor(ZMBase):
                     time.sleep(3)
                 else:
                     self._volume_rate = _volume_rate
-                    self._logger.info(self._volume_rate)
+                    # self._logger.info(self._volume_rate)
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
