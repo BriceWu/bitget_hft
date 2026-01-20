@@ -24,11 +24,9 @@ class VolumeMonitor(ZMBase):
         self._logger = zm_log.get_log(self._symbol)
         self._rest_api = None
         self._volume_rate = volume_rate
-        self._volume_list = None
 
     def init_params(self):
         try:
-            self._volume_list = []
             self._rest_api = BinancePublicPerpApi(self._symbol, self._logger)
             return
         except Exception as e:
