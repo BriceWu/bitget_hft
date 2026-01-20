@@ -6,6 +6,10 @@ from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
 from api.bn_public_rest_api import BinancePublicPerpApi
 
+BASE_VOLUME_DICT = {
+    'doge_usdt': 4.2 * 100 * 10000  # 4.2M
+}
+
 
 
 class VolumeMonitor(ZMBase):
