@@ -6,7 +6,6 @@ import base64
 from zmqfsi.util.zm_env import RunEnv
 import hmac, hashlib, http.client
 import zmqfsi.util.zm_log as zm_log
-from zmqfsi.util.zm_client import ZMClient
 from bit1024.account.base import AccountBase
 from config import HFT_KEYS_COLLECTION, HFT_ACCOUNT_COLLECTION
 
