@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback, socket, http.client, time, json
+import traceback, socket, http.client, time, os, sys
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
@@ -21,7 +21,7 @@ class VolumeMonitor(ZMBase):
         """
         ZMBase.__init__(self)
         self._symbol = symbol
-        self._logger = zm_log.get_log(self._symbol)
+        self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}')
         self._public_rest_api = None
         self._volume_rate = volume_rate
         self._base_vol = 0
