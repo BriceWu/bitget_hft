@@ -27,6 +27,8 @@ class VolumeMonitor(ZMBase):
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
             self._logger.error(error_info)
+            self.send_wechat(self._mail_to, "HFT量监控异常", error_info)
+            raise
 
     def start(self):
         pass
