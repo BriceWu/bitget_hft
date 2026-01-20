@@ -69,7 +69,6 @@ class BinancePublicPerpApi(ZMBase):
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
     _symbol = "doge_usdt"
-    _mark = "xyz369free"
-    _logger = zm_log.get_log("%s_%s" % (_symbol, _mark))
-    b = BitgetPerpApi(_symbol, _mark, _logger)
-    b.get_position_info()
+    _logger = zm_log.get_log(_symbol)
+    b = BinancePublicPerpApi(_symbol, _logger)
+    b.get_continuous_klines()
