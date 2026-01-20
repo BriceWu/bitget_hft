@@ -38,6 +38,7 @@ class VolumeMonitor(ZMBase):
             raise
 
     def start(self):
+        self.init_params()
         last_time = time.time()
         while True:
             try:
