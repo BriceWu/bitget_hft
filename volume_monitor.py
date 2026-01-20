@@ -46,7 +46,9 @@ class VolumeMonitor(ZMBase):
             try:
                 last_time = self.pace_cycle(last_time, cyc_time=1)
                 klines = self._public_rest_api.get_klines()
-                volume = max(float(klines[0][5]), float(klines[1][5]))
+                vol0 = float(klines[0][5])
+                vol1 = float(klines[1][5])
+                volume = max(vol0, vol1)
                 _volume_rate = volume / self._base_vol
                 if _volume_rate == self._volume_rate:
                     time.sleep(3)
