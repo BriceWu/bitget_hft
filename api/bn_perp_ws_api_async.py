@@ -5,7 +5,7 @@ import time
 import traceback
 import json, orjson
 import aiohttp
-from strategy_exchange_api.ws_socket_base import WSSocketBase
+from api.ws_socket_base import WSSocketBase
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
 
