@@ -4,7 +4,6 @@ import asyncio
 import time
 import traceback
 import json, orjson
-import aiohttp
 from api.ws_socket_base import WSSocketBase
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
@@ -17,8 +16,6 @@ class BinancePerpWSApiAsync(WSSocketBase):
         self._tgt_platform = "binance_perp"
         self.format_symbol(self._symbol)
         self._ws_url = "wss://fstream.binance.com/stream"
-        self.interval = 2
-        self._rest_timeout = aiohttp.ClientTimeout(2)
 
     def format_symbol(self, symbol):
         self._format_symbol = symbol.replace('_', '')
@@ -49,60 +46,16 @@ class BinancePerpWSApiAsync(WSSocketBase):
                 await asyncio.sleep(1)
 # endregion
 
-    async def query_depth_rest(self):
-        url = "https://fapi.binance.com/fapi/v1/depth"
-        params = {
-            'symbol': self._format_symbol.upper(),
-            'limit': 5
-        }
-        headers = {}
-        try:
-            async with aiohttp.ClientSession(timeout=self._rest_timeout) as session:
-                async with session.get(url, headers=headers, params=params) as response:
-                    if response.status == 200:
-                        return await response.json()
-                    else:
-                        return None
-        except asyncio.TimeoutError as e:
-            message = f"{self._symbol} TimeoutError;url:{url};exception:{e}"
-            self._logger.info(message)
-            return None
-        except Exception as e:
-            self._logger.error(e)
-            await asyncio.sleep(2)
-            return None
-
-    async def analysis_rest_depth(self):
-        """
-        转化成和ws格式一样的
-        :return:
-        """
-        result = await self.query_depth_rest()
-        if result is None:
-            return None
-        else:
-            return result
-
-    async def analysis(self, exec_ws_strategy, exec_rest_strategy):
+    async def analysis(self, exec_ws_strategy):
         self._logger.info("Start Analysis ......")
         last_update_id = self.update_id
-        last_req_time = time.time()
         last_time = 0
         while True:
             try:
                 last_time = await self.async_process_sleep(last_time, cyc_time=50)
                 if last_update_id == self.update_id:
-                    cur_time = time.time()
-                    if cur_time - last_req_time > self.interval:
-                        last_req_time = cur_time
-                        data = await self.analysis_rest_depth()
-                        if data:
-                            exec_rest_strategy(data)
-                    else:
-                        await asyncio.sleep(0.003)
                     continue
                 last_update_id = self.update_id
-                last_req_time = self.update_id
                 data = orjson.loads(self.ws_message)
                 exec_ws_strategy(data)
             except Exception as e:
