@@ -1,7 +1,6 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 import asyncio
-import time
 import traceback
 import json, orjson
 from api.ws_socket_base import WSSocketBase
@@ -52,7 +51,7 @@ class BinancePerpWSApiAsync(WSSocketBase):
         last_time = 0
         while True:
             try:
-                last_time = await self.async_process_sleep(last_time, cyc_time=5)
+                last_time = await self.pace_cycle_async(last_time, cyc_time=0.005)  # 5ms
                 if last_update_id == self.update_id:
                     continue
                 last_update_id = self.update_id
@@ -62,18 +61,3 @@ class BinancePerpWSApiAsync(WSSocketBase):
                 error_info = "Analysis Exception: %s,%s" % (e, traceback.format_exc())
                 self._logger.info(error_info)
                 await asyncio.sleep(2)
-
-    @staticmethod
-    async def async_process_sleep(last_time, cyc_time=250):
-        """
-        异步进程休眠
-        :param last_time: 上一轮标记时间(单位：ms)
-        :param cyc_time: 循环时长
-        :return: 本轮标记时间(单位：ms)
-        """
-        now_time = time.time() * 1000
-        delta_time = now_time - last_time
-        if delta_time < cyc_time:  # 计算时长小于cyc_time， 则休眠
-            sleep_time = (cyc_time - delta_time) * 0.001
-            await asyncio.sleep(sleep_time)
-        return time.time() * 1000
