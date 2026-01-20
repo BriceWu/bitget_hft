@@ -51,7 +51,7 @@ class BinancePublicPerpApi(ZMBase):
 # endregion
     def get_continuous_klines(self):
         """
-        获取连续K线
+        获取连续K线, 包含当前这一分钟
         :return:
         """
         return self.http_get(f"/fapi/v1/continuousKlines?pair={self._format_symbol}&contractType=PERPETUAL&interval=1m&limit=3")
