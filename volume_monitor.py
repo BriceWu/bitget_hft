@@ -42,7 +42,7 @@ class VolumeMonitor(ZMBase):
         while True:
             try:
                 last_time = self.pace_cycle(last_time, cyc_time=1)
-                self._public_rest_api.get_ticks()
+                klines = self._public_rest_api.get_klines()
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
