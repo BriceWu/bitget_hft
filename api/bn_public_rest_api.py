@@ -2,10 +2,9 @@
 # -*- coding:utf-8 -*-
 import time
 import orjson
-import base64
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
-import hmac, hashlib, http.client
+import http.client
 import zmqfsi.util.zm_log as zm_log
 
 
@@ -17,7 +16,7 @@ class BinancePublicPerpApi(ZMBase):
         self._logger = logger
         if logger is None:
             raise Exception("日志对象未初始化")
-        self._host_address = "api.bitget.com"
+        self._host_address = "fapi.binance.com"
         self._format_symbol = self.format_symbol()
         self._https_client = None
         self.init_https_connection()
