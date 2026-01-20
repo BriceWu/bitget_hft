@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import time
+import traceback
 import orjson
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
@@ -39,14 +39,20 @@ class BinancePublicPerpApi(ZMBase):
         初始化https连接 [仅仅支持https]
         :return:
         """
-        if self._https_client:
-            self._https_client.close()
-        if self._run_env != "test":
-            https_conn = http.client.HTTPSConnection(self._host_address, timeout=10)
-        else:
-            https_conn = http.client.HTTPSConnection("127.0.0.1", port=10809, timeout=10)
-            https_conn.set_tunnel(self._host_address)
-        self._https_client = https_conn
+        try:
+            if self._https_client:
+                self._https_client.close()
+            if self._run_env != "test":
+                https_conn = http.client.HTTPSConnection(self._host_address, timeout=10)
+            else:
+                https_conn = http.client.HTTPSConnection("127.0.0.1", port=10809, timeout=10)
+                https_conn.set_tunnel(self._host_address)
+            self._https_client = https_conn
+        except Exception as e:
+            error_info = "%s,%s" % (e, traceback.format_exc())
+            self._logger.error(error_info)
+            self.send_wechat(self._mail_to, "HTTP连接初始化异常", error_info)
+            raise
 
 # endregion
     def get_continuous_klines(self):
