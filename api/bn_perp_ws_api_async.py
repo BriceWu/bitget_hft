@@ -52,7 +52,7 @@ class BinancePerpWSApiAsync(WSSocketBase):
         last_time = 0
         while True:
             try:
-                last_time = await self.async_process_sleep(last_time, cyc_time=50)
+                last_time = await self.async_process_sleep(last_time, cyc_time=5)
                 if last_update_id == self.update_id:
                     continue
                 last_update_id = self.update_id
