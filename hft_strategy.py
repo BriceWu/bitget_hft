@@ -6,6 +6,8 @@ from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
 from volume_monitor import VolumeMonitor
+from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
+from api.bitget_perp_api import BitgetPerpApi
 
 def __volume_monitor(env, symbol, volume_rate, trade_side):
     RunEnv.set_run_env(env)
@@ -23,13 +25,15 @@ class HFTStrategy(ZMBase):
         self._symbol = symbol
         self._mark = mark
         self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}_{self._mark}')
-        self._public_rest_api = None
         self.v_volume_rate = volume_rate
         self.v_trade_side = trade_side
-        self._base_vol = 0
+        self._tgt_ws_api = None
+        self._rest_api = None
 
     def init_params(self):
         try:
+            self._tgt_ws_api = BinancePerpWSApiAsync(self._follow_symbol)
+            self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
             return
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
