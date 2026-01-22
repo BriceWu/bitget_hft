@@ -48,12 +48,9 @@ class HFTStrategy(ZMBase):
         # 同时运行 task_1 和 task_2
         await asyncio.gather(self._tgt_ws_api.start_ws(), self._tgt_ws_api.analysis(self.start_hft))  # 创建任务
 
-    def start_hft(self):
-        self.init_params()
-        last_time = time.time()
+    def start_hft(self, data):
         while True:
             try:
-                last_time = self.pace_cycle(last_time, cyc_time=1)
                 pass
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
