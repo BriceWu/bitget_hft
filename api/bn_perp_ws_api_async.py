@@ -4,7 +4,6 @@ import asyncio
 import traceback
 import json, orjson
 from api.ws_socket_base import WSSocketBase
-from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 
 
 class BinancePerpWSApiAsync(WSSocketBase):
@@ -20,7 +19,7 @@ class BinancePerpWSApiAsync(WSSocketBase):
         self._format_symbol = symbol.replace('_', '')
 
 # region 订阅深度
-    async def subscribe_ticker(self):
+    async def subscribe_data(self):
         subscribe_message = {
             "method": "SUBSCRIBE",
             "params": [f"{self._format_symbol}@bookTicker"],
