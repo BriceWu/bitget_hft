@@ -94,11 +94,14 @@ class HFTStrategy(ZMBase):
     def analysis_bn_bs_one(self):
         val = orjson.loads(self._bn_ws_api.ws_message)
         data = val['data']
-        self._bn_ask_one = data['a']
-        self._bn_bid_one = data['b']
+        self._bn_ask_one = float(data['a'])
+        self._bn_bid_one = float(data['b'])
 
     def analysis_bitget_ws_one(self):
-        pass
+        val = orjson.loads(self._bitget_ws_api.ws_message)
+        data = val['data'][0]
+        self._bitget_ask_one = float(data['asks'][0][0])
+        self._bitget_bid_one = float(data['bids'][0][0])
 
 
 if __name__ == '__main__':
