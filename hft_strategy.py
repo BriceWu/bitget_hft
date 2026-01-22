@@ -34,6 +34,7 @@ class HFTStrategy(ZMBase):
         self._bitget_ws_api = None
         self._rest_api = None
 
+        self._bn_price_changed = False
         self._bn_ask_one = None
         self._bn_bid_one = None
         self._bitget_ask_one = None
@@ -91,7 +92,13 @@ class HFTStrategy(ZMBase):
     def analysis_bn_bs_one(self):
         val = orjson.loads(self._bn_ws_api.ws_message)
         data = val['data']
-        self._bn_ask_one = float(data['a'])
+        _bn_ask_one = float(data['a'])
+        if _bn_ask_one != self._bn_ask_one:
+            self._bn_price_changed = True
+            self._bn_ask_one = _bn_ask_one
+        else:
+            self._bn_price_changed = False
+            
         self._bn_bid_one = float(data['b'])
 
     def analysis_bitget_ws_one(self):
