@@ -74,7 +74,8 @@ class HFTStrategy(ZMBase):
                     continue
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
-                self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
+                if self._bn_price_changed:
+                    self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
@@ -98,7 +99,7 @@ class HFTStrategy(ZMBase):
             self._bn_ask_one = _bn_ask_one
         else:
             self._bn_price_changed = False
-            
+
         self._bn_bid_one = float(data['b'])
 
     def analysis_bitget_ws_one(self):
