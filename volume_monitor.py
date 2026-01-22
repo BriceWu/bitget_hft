@@ -79,5 +79,5 @@ class VolumeMonitor(ZMBase):
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
     _symbol = "doge_usdt"
-    b = VolumeMonitor(_symbol, None)
+    b = VolumeMonitor(_symbol, None, None)
     b.start()
