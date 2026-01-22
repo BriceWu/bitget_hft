@@ -64,5 +64,8 @@ if __name__ == '__main__':
     v_trade_side = Value('i', 0)
     v_volume_rate = Value('d', 0)
     Process(target=__volume_monitor, args=(_env, _symbol, v_trade_side, v_volume_rate)).start()
-    b = HFTStrategy(_symbol, None, None)
-    b.start()
+    while True:
+        time.sleep(1)
+        print("开始打印......")
+        print(v_trade_side.value)
+        print(v_volume_rate.value)
