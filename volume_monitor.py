@@ -48,21 +48,21 @@ class VolumeMonitor(ZMBase):
                 klines = self._public_rest_api.get_klines()
                 vol0 = float(klines[0][5])
                 if vol0 < self._base_vol * 0.2:
-                    self._trade_side = 0
+                    self._trade_side.value = 0
                 else:
                     ratio = float(klines[0][9]) / vol0
                     if ratio > 0.8:
-                        self._trade_side = 1  # 主动买入占超80%
+                        self._trade_side.value = 1  # 主动买入占超80%
                     elif ratio < 0.2:
-                        self._trade_side = -1  # 主动卖出占80%
+                        self._trade_side.value = -1  # 主动卖出占80%
                     else:
-                        self._trade_side = 0
+                        self._trade_side.value = 0
                 vol1 = float(klines[1][5])
                 volume = max(vol0, vol1)
-                self._volume_rate = volume / self._base_vol
-                if self._volume_rate < 0.8:
+                self._volume_rate.value = volume / self._base_vol
+                if self._volume_rate.value < 0.8:
                     time.sleep(3)
-                self._logger.info(f"self._volume_rate:{self._volume_rate}, self._trade_side:{self._trade_side}")
+                self._logger.info(f"volume_rate:{self._volume_rate.value}, trade_side:{self._trade_side.value}")
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)

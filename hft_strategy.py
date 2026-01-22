@@ -63,7 +63,7 @@ if __name__ == '__main__':
     _symbol = "doge_usdt"
     v_trade_side = Value('i', 0)
     v_volume_rate = Value('d', 0)
-    Process(target=__volume_monitor, args=(_env, _symbol, v_trade_side, v_volume_rate)).start()
+    Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
     while True:
         time.sleep(1)
         print("开始打印......")
