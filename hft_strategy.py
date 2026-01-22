@@ -66,7 +66,6 @@ class HFTStrategy(ZMBase):
     async def start_hft(self):
         last_time = 0
         last_bn_update_id = -1
-        last_bitget_update_id = -1
         while True:
             try:
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
@@ -74,9 +73,9 @@ class HFTStrategy(ZMBase):
                     continue
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
-                self._logger.info(self._bn_ws_api.ws_message)
+                self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}")
+                self._logger.info(f"Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 self._logger.info(self._bitget_ws_api.ws_message)
-                last_bitget_update_id = self._bitget_ws_api.update_id
                 last_bn_update_id = self._bn_ws_api.update_id
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
