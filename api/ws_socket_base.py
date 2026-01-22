@@ -30,6 +30,21 @@ class WSSocketBase(ZMBase):
         if self.ws_client:
             self.ws_client.close()
 
+    async def start_ws(self):
+        while True:
+            try:
+                await self.init_connection(time_out=1)
+                await self.subscribe_data()
+                await self.receive()
+            except (ConnectionClosedOK, ConnectionClosedError) as e:
+                self._logger.error(e)
+                await asyncio.sleep(0.1)
+            except Exception as e:
+                error_info = "Start ws Exception: %s,%s" % (e, traceback.format_exc())
+                self._logger.info(error_info)
+                self.send_wechat(self._mail_to, "Connect Exception", f"{self._tgt_platform}{self._symbol}：{error_info}")
+                await asyncio.sleep(1)
+
     async def receive(self):
         self._logger.info('Start Receive ......')
         self._logger.info(f'订阅结果：{await self.ws_client.recv()}')
@@ -45,3 +60,6 @@ class WSSocketBase(ZMBase):
                 self._logger.error(error_info)
                 self.send_wechat(self._mail_to, "Receive Exception", f"{self._tgt_platform}{self._symbol}：{error_info}")
                 raise e
+
+    async def subscribe_data(self):
+        raise Exception("未实现异常")
