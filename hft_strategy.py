@@ -84,7 +84,7 @@ if __name__ == '__main__':
     _env = RunEnv.get_run_env()
     _symbol = "doge_usdt"
     _mark = "xyz369free"
-    v_trade_side = Value('i', 0)
+    v_trade_side = Value('d', 0)
     v_volume_rate = Value('d', 0)
     Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
     loop = asyncio.SelectorEventLoop()
