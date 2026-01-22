@@ -45,20 +45,3 @@ class WSSocketBase(ZMBase):
                 self._logger.error(error_info)
                 self.send_wechat(self._mail_to, "Receive Exception", f"{self._tgt_platform}{self._symbol}：{error_info}")
                 raise e
-
-    async def analysis(self, exec_ws_strategy):
-        self._logger.info(f"Start Analysis ......{self._tgt_platform}")
-        last_update_id = self.update_id
-        last_time = 0
-        while True:
-            try:
-                last_time = await self.pace_cycle_async(last_time, cyc_time=0.005)  # 5ms
-                if last_update_id == self.update_id:
-                    continue
-                last_update_id = self.update_id
-                data = orjson.loads(self.ws_message)
-                exec_ws_strategy(data)
-            except Exception as e:
-                error_info = "Analysis Exception[{%s}]: %s,%s" % (self._tgt_platform, e, traceback.format_exc())
-                self._logger.info(error_info)
-                await asyncio.sleep(2)
