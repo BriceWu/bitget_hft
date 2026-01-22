@@ -47,8 +47,8 @@ class HFTStrategy(ZMBase):
 
     async def run_tasks(self):
         self.init_params()
-        self.send_wechat(self._mail_to, "Active Orders Start", "Active Orders Start")
-        self._logger.info("active orders start")
+        self.send_wechat(self._mail_to, "HFT Start", "HFT Start")
+        self._logger.info("HFT start")
         # 同时运行 task_1 和 task_2
         await asyncio.gather(self._bn_ws_api.start_ws(), self._bitget_ws_api.start_ws(), self.start_hft())  # 创建任务
 
