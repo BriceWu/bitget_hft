@@ -68,12 +68,12 @@ class HFTStrategy(ZMBase):
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
-                self.send_wechat(self._mail_to, "VolumeMonitor Exception1", err_msg)
+                self.send_wechat(self._mail_to, "HFT Exception1", err_msg)
                 self._rest_api.init_https_connection()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.error(error_info)
-                self.send_wechat(self._mail_to, 'VolumeMonitor Exception2', error_info)
+                self.send_wechat(self._mail_to, 'HFT Exception2', error_info)
                 # 重建http连接
                 self._rest_api.init_https_connection()
                 await asyncio.sleep(5)
