@@ -22,7 +22,7 @@ class VolumeMonitor(ZMBase):
         """
         ZMBase.__init__(self)
         self._symbol = symbol
-        self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}')
+        self._logger = zm_log.get_log(f'volume_monitor_{self._symbol}')
         self._public_rest_api = None
         self._volume_rate = volume_rate
         self._trade_side = trade_side
@@ -62,6 +62,7 @@ class VolumeMonitor(ZMBase):
                 self._volume_rate = volume / self._base_vol
                 if self._volume_rate < 0.8:
                     time.sleep(3)
+                self._logger.info(f"self._volume_rate:{self._volume_rate}, self._trade_side:{self._trade_side}")
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
