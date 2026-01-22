@@ -1,9 +1,16 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
 import traceback, socket, http.client, time, os, sys
+from multiprocessing import Process, Value
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
+from volume_monitor import VolumeMonitor
+
+def __volume_monitor(env, symbol, volume_rate, trade_side):
+    RunEnv.set_run_env(env)
+    vm = VolumeMonitor(symbol, volume_rate, trade_side)
+    vm.start()
 
 
 class HFTStrategy(ZMBase):
@@ -52,6 +59,10 @@ class HFTStrategy(ZMBase):
 
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
+    _env = RunEnv.get_run_env()
     _symbol = "doge_usdt"
+    v_trade_side = Value('i', 0)
+    v_volume_rate = Value('d', 0)
+    Process(target=__volume_monitor, args=(_env, _symbol, v_trade_side, v_volume_rate)).start()
     b = HFTStrategy(_symbol, None, None)
     b.start()
