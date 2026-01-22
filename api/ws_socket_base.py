@@ -1,6 +1,6 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
-import time, orjson, asyncio
+import time, asyncio
 import traceback
 import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
@@ -24,7 +24,7 @@ class WSSocketBase(ZMBase):
         ssl_context = ssl._create_unverified_context()
         # ssl_context = ssl.create_default_context()
         self.ws_client = await websockets.connect(self._ws_url, ssl=ssl_context, open_timeout=time_out)
-        self._logger.info(f"[{self._symbol}]ws初始化")
+        self._logger.info(f"[{self._tgt_platform}, {self._symbol}]ws初始化")
 
     def close(self):
         if self.ws_client:
@@ -46,8 +46,8 @@ class WSSocketBase(ZMBase):
                 await asyncio.sleep(1)
 
     async def receive(self):
-        self._logger.info('Start Receive ......')
-        self._logger.info(f'订阅结果：{await self.ws_client.recv()}')
+        self._logger.info(f'Start Receive ......{self._tgt_platform}')
+        self._logger.info(f'订阅结果[{self._tgt_platform}]：{await self.ws_client.recv()}')
         while True:
             try:
                 self.ws_message = await self.ws_client.recv()  # 使用异步接收
