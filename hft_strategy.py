@@ -1,6 +1,7 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback, socket, http.client, time, os, sys, asyncio
+import traceback, socket, http.client, os, sys, asyncio
+from zmqfsi.util.zm_client import ZMClient
 from multiprocessing import Process, Value
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
@@ -35,6 +36,7 @@ class HFTStrategy(ZMBase):
 
     def init_params(self):
         try:
+            ZMClient.set('logger', self._logger)
             self._bn_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._bitget_ws_api = BitgetPerpWSApiAsync(self._symbol)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
