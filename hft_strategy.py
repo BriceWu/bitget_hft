@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback, socket, http.client, os, sys, asyncio
+import traceback, socket, http.client, os, sys, asyncio, orjson
 from zmqfsi.util.zm_client import ZMClient
 from multiprocessing import Process, Value
 from zmqfsi.service.zm_base import ZMBase
@@ -33,7 +33,7 @@ class HFTStrategy(ZMBase):
         self._bn_ws_api = None
         self._bitget_ws_api = None
         self._rest_api = None
-        
+
         self._bn_ask_one = None
         self._bn_bid_one = None
         self._bitget_ask_one = None
@@ -90,7 +90,10 @@ class HFTStrategy(ZMBase):
                 await asyncio.sleep(5)
 
     def analysis_bn_bs_one(self):
-        pass
+        val = orjson.loads(self._bn_ws_api.ws_message)
+        data = val['data']
+        self._bn_ask_one = data['a']
+        self._bn_bid_one = data['b']
 
     def analysis_bitget_ws_one(self):
         pass
