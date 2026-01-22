@@ -33,6 +33,11 @@ class HFTStrategy(ZMBase):
         self._bn_ws_api = None
         self._bitget_ws_api = None
         self._rest_api = None
+        
+        self._bn_ask_one = None
+        self._bn_bid_one = None
+        self._bitget_ask_one = None
+        self._bitget_bid_one = None
 
     def init_params(self):
         try:
@@ -83,6 +88,12 @@ class HFTStrategy(ZMBase):
                 # 重建http连接
                 self._rest_api.init_https_connection()
                 await asyncio.sleep(5)
+
+    def analysis_bn_bs_one(self):
+        pass
+
+    def analysis_bitget_ws_one(self):
+        pass
 
 
 if __name__ == '__main__':
