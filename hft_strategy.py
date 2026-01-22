@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import traceback, socket, http.client, time, os, sys
+import traceback, socket, http.client, time, os, sys, asyncio
 from multiprocessing import Process, Value
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
@@ -66,6 +66,11 @@ if __name__ == '__main__':
     RunEnv.set_run_env('test')
     _env = RunEnv.get_run_env()
     _symbol = "doge_usdt"
+    _mark = "xyz369free"
     v_trade_side = Value('i', 0)
     v_volume_rate = Value('d', 0)
     Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
+    loop = asyncio.SelectorEventLoop()
+    asyncio.set_event_loop(loop)
+    active = HFTStrategy(_symbol, _mark, v_volume_rate, v_trade_side)
+    loop.run_until_complete(active.run_tasks())
