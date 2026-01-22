@@ -16,14 +16,19 @@ class BitgetPerpWSApiAsync(WSSocketBase):
         self._ws_url = "wss://fstream.binance.com/stream"
 
     def format_symbol(self, symbol):
-        self._format_symbol = symbol.replace('_', '')
+        self._format_symbol = symbol.replace('_', '').upper()
 
 # region 订阅深度
     async def subscribe_data(self):
         subscribe_message = {
-            "method": "SUBSCRIBE",
-            "params": [f"{self._format_symbol}@bookTicker"],
-            "id": 1
+            "op": "subscribe",
+            "args": [
+                {
+                    "instType": "USDT-FUTURES",
+                    "channel": "books1",
+                    "instId": self._format_symbol
+                }
+            ]
         }
         sub_mes = json.dumps(subscribe_message)
         await self.ws_client.send(sub_mes)
