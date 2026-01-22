@@ -67,8 +67,8 @@ class HFTStrategy(ZMBase):
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
                 if (last_bitget_update_id == self._bitget_ws_api.update_id) and (last_bn_update_id == self._bn_ws_api.update_id):
                     continue
-                print(self._bn_ws_api.message)
-                print(self._bitget_ws_api.message)
+                print(self._bn_ws_api.ws_message)
+                print(self._bitget_ws_api.ws_message)
                 last_bitget_update_id = self._bitget_ws_api.update_id
                 last_bn_update_id = self._bn_ws_api.update_id
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
