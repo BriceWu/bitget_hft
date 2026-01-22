@@ -47,7 +47,7 @@ class WSSocketBase(ZMBase):
                 raise e
 
     async def analysis(self, exec_ws_strategy):
-        self._logger.info("Start Analysis ......")
+        self._logger.info(f"Start Analysis ......{self._tgt_platform}")
         last_update_id = self.update_id
         last_time = 0
         while True:
@@ -59,6 +59,6 @@ class WSSocketBase(ZMBase):
                 data = orjson.loads(self.ws_message)
                 exec_ws_strategy(data)
             except Exception as e:
-                error_info = "Analysis Exception: %s,%s" % (e, traceback.format_exc())
+                error_info = "Analysis Exception[{%s}]: %s,%s" % (self._tgt_platform, e, traceback.format_exc())
                 self._logger.info(error_info)
                 await asyncio.sleep(2)
