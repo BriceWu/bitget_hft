@@ -48,7 +48,7 @@ class HFTStrategy(ZMBase):
         # 同时运行 task_1 和 task_2
         await asyncio.gather(self._tgt_ws_api.start_ws(), self.start_hft())  # 创建任务
 
-    def start_hft(self):
+    async def start_hft(self):
         while True:
             try:
                 pass
