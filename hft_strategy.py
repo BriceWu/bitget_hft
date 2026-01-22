@@ -53,9 +53,16 @@ class HFTStrategy(ZMBase):
         await asyncio.gather(self._bn_ws_api.start_ws(), self._bitget_ws_api.start_ws(), self.start_hft())  # 创建任务
 
     async def start_hft(self):
+        last_time = 0
+        last_bn_update_id = 0
+        last_bitget_update_id = 0
         while True:
             try:
-                pass
+                last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
+                if (last_bitget_update_id == self._bitget_ws_api.update_id) and (last_bn_update_id == self._bn_ws_api.update_id):
+                    continue
+                last_bitget_update_id = self._bitget_ws_api.update_id
+                last_bn_update_id = self._bn_ws_api.update_id
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
