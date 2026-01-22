@@ -63,7 +63,7 @@ class HFTStrategy(ZMBase):
                 self.send_wechat(self._mail_to, 'VolumeMonitor Exception2', error_info)
                 # 重建http连接
                 self._rest_api.init_https_connection()
-                time.sleep(10)
+                await asyncio.sleep(5)
 
 
 if __name__ == '__main__':
