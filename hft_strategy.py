@@ -46,9 +46,9 @@ class HFTStrategy(ZMBase):
         self.send_wechat(self._mail_to, "Active Orders Start", "Active Orders Start")
         self._logger.info("active orders start")
         # 同时运行 task_1 和 task_2
-        await asyncio.gather(self._tgt_ws_api.start_ws(), self._tgt_ws_api.analysis(self.start_hft))  # 创建任务
+        await asyncio.gather(self._tgt_ws_api.start_ws(), self.start_hft())  # 创建任务
 
-    def start_hft(self, data):
+    def start_hft(self):
         while True:
             try:
                 pass
