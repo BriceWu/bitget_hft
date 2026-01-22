@@ -33,7 +33,10 @@ class WSSocketBase(ZMBase):
     async def start_ws(self):
         while True:
             try:
-                await self.init_connection(time_out=1)
+                if self._run_env == 'test':
+                    await self.init_connection(time_out=15)
+                else:
+                    await self.init_connection(time_out=1)
                 await self.subscribe_data()
                 await self.receive()
             except (ConnectionClosedOK, ConnectionClosedError) as e:
