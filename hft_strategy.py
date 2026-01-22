@@ -14,17 +14,18 @@ def __volume_monitor(env, symbol, volume_rate, trade_side):
 
 
 class HFTStrategy(ZMBase):
-    def __init__(self, symbol, mark):
+    def __init__(self, symbol, mark, volume_rate, trade_side):
         """
         初始化
         :param symbol: 交易对
         """
         ZMBase.__init__(self)
         self._symbol = symbol
-        self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}')
+        self._mark = mark
+        self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}_{self._mark}')
         self._public_rest_api = None
-        self._volume_rate = volume_rate
-        self._trade_side = trade_side
+        self.v_volume_rate = volume_rate
+        self.v_trade_side = trade_side
         self._base_vol = 0
 
     def init_params(self):
@@ -64,8 +65,3 @@ if __name__ == '__main__':
     v_trade_side = Value('i', 0)
     v_volume_rate = Value('d', 0)
     Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
-    while True:
-        time.sleep(1)
-        print("开始打印......")
-        print(v_trade_side.value)
-        print(v_volume_rate.value)
