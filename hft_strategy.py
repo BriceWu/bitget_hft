@@ -38,6 +38,10 @@ class HFTStrategy(ZMBase):
         try:
             ZMClient.set('logger', self._logger)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
+            if self._run_env == 'test':
+                import socks, socket
+                socks.set_default_proxy(socks.HTTP, "127.0.0.1", 10809)  # 设置全局代理
+                socket.socket = socks.socksocket
             self._bn_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._bitget_ws_api = BitgetPerpWSApiAsync(self._symbol)
             return
