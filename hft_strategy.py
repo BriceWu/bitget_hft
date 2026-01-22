@@ -32,7 +32,7 @@ class HFTStrategy(ZMBase):
 
     def init_params(self):
         try:
-            self._tgt_ws_api = BinancePerpWSApiAsync(self._follow_symbol)
+            self._tgt_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
             return
         except Exception as e:
