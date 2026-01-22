@@ -70,7 +70,7 @@ class HFTStrategy(ZMBase):
         while True:
             try:
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
-                if last_bn_update_id == self._bn_ws_api.update_id:
+                if (last_bn_update_id == self._bn_ws_api.update_id) and (self._bitget_ws_api.update_id != -1):
                     continue
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
