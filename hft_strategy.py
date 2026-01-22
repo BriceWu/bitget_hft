@@ -37,9 +37,9 @@ class HFTStrategy(ZMBase):
     def init_params(self):
         try:
             ZMClient.set('logger', self._logger)
+            self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
             self._bn_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._bitget_ws_api = BitgetPerpWSApiAsync(self._symbol)
-            self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
             return
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
