@@ -45,7 +45,7 @@ class HFTStrategy(ZMBase):
         self._sell_profit_rate = None  # bn_ask / bitget_bid
         self._buy_profit_rate = None  # bn_bid / bitget_ask
         self._bb_price_list = None  # [(bn_ask, bn_bid, bitget_ask, bitget_bid), (bn_ask, bn_bid, bitget_ask, bitget_bid) ......]
-        self.bn_sell = 0.
+        self.sum_bn_sell = 0.
         self.bn_buy = 0.
         self.bitget_sell = 0.
         self.bitget_buy = 0.
@@ -53,7 +53,7 @@ class HFTStrategy(ZMBase):
 
     def init_params(self):
         try:
-            self.bn_sell = 0.
+            self.sum_bn_sell = 0.
             self.bn_buy = 0.
             self.bitget_sell = 0.
             self.bitget_buy = 0.
@@ -141,12 +141,12 @@ class HFTStrategy(ZMBase):
         self._last_price_list_update_time = time.time()
         if len(self._bb_price_list) > 575:  # 1天
             old = self._bb_price_list.pop(0)
-            self.bn_sell -= old[0]
+            self.sum_bn_sell -= old[0]
             self.bn_buy -= old[1]
             self.bitget_sell -= old[2]
             self.bitget_buy -= old[3]
 
-        self.bn_sell += self._bn_ask_one
+        self.sum_bn_sell += self._bn_ask_one
         self.bn_buy += self._bn_bid_one
         self.bitget_sell += self._bitget_ask_one
         self.bitget_buy += self._bitget_bid_one
@@ -164,8 +164,8 @@ class HFTStrategy(ZMBase):
             bitget_sell += _bitget_ask_one
             bitget_buy += _bitget_bid_one
 
-        if abs(self.bn_sell-bn_sell) > POSITIVE_ZERO:
-            self._logger.error(f'bn_sell:{self.bn_sell}, {bn_sell}')
+        if abs(self.sum_bn_sell-bn_sell) > POSITIVE_ZERO:
+            self._logger.error(f'bn_sell:{self.sum_bn_sell}, {bn_sell}')
         if abs(self.bn_buy-bn_buy) > POSITIVE_ZERO:
             self._logger.error(f'bn_buy:{self.bn_buy}, {bn_buy}')
         if abs(self.bitget_sell-bitget_sell) > POSITIVE_ZERO:
