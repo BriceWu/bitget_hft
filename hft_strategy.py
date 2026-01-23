@@ -141,6 +141,7 @@ class HFTStrategy(ZMBase):
 
         self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
         self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
+        
         bn_sell = 0.
         bn_buy = 0.
         bitget_sell = 0.
