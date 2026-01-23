@@ -188,6 +188,8 @@ class HFTStrategy(ZMBase):
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
 
     def update_order_vol(self):
+        if self._have_placed_order:  # 下单了, 则不更新
+            return
         self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = int(time.time()*1000)
 
