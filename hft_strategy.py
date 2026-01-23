@@ -56,6 +56,8 @@ class HFTStrategy(ZMBase):
         self._order_vol = None
         self._client_open_order_id = None
 
+        self._pre_accuracy = 5
+
     def init_params(self):
         try:
             self.sum_bn_sell = 0.
@@ -182,7 +184,7 @@ class HFTStrategy(ZMBase):
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
 
     def update_order_vol(self):
-        self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, 5)
+        self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = int(time.time()*1000)
 
     def open_sell(self):
