@@ -44,10 +44,18 @@ class HFTStrategy(ZMBase):
         self._sell_profit_rate = None  # bn_ask / bitget_bid
         self._buy_profit_rate = None  # bn_bid / bitget_ask
         self._bb_price_list = None  # [(bn_ask, bn_bid, bitget_ask, bitget_bid), (bn_ask, bn_bid, bitget_ask, bitget_bid) ......]
+        self.bn_sell = 0.
+        self.bn_buy = 0.
+        self.bitget_sell = 0.
+        self.bitget_buy = 0.
         self._last_price_list_update_time = 0
 
     def init_params(self):
         try:
+            self.bn_sell = 0.
+            self.bn_buy = 0.
+            self.bitget_sell = 0.
+            self.bitget_buy = 0.
             self._bb_price_list = []
             ZMClient.set('logger', self._logger)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
