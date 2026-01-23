@@ -188,10 +188,10 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = int(time.time()*1000)
 
     def open_sell(self):
-        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol, p_side="sell", p_client_id)
+        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
 
     def open_buy(self):
-        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol, p_side="buy", p_client_id)
+        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
 
 
 
