@@ -57,6 +57,7 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = None
 
         self._pre_accuracy = 5
+        self._have_placed_order = False
 
     def init_params(self):
         try:
@@ -100,13 +101,15 @@ class HFTStrategy(ZMBase):
                     # 重建http连接
                     await asyncio.sleep(10)
                     continue
-
+                self._have_placed_order = False
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
                 if self._bn_price_changed and len(self._bb_price_list) > 10:
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
+                        self._have_placed_order = True
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
                     elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
+                        self._have_placed_order = True
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
