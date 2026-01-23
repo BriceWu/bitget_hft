@@ -99,7 +99,7 @@ class HFTStrategy(ZMBase):
 
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
-                if self._bn_price_changed:
+                if self._bn_price_changed and len(self._bb_price_list) > 10:
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
                         self.open_sell()
                     elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
