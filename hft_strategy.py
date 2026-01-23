@@ -193,6 +193,13 @@ class HFTStrategy(ZMBase):
         self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = int(time.time()*1000)
 
+    def close_position(self):
+        """
+        平仓
+        :return:
+        """
+        pass
+
 
 if __name__ == '__main__':
     RunEnv.set_run_env('test')
