@@ -57,7 +57,7 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = None
 
         self._pre_accuracy = 5
-        self._have_placed_order = 0
+        self._have_placed_order = 0.
 
     def init_params(self):
         try:
@@ -103,7 +103,7 @@ class HFTStrategy(ZMBase):
                     continue
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
-                if self._bn_price_changed and (self._have_placed_order > 0.) and len(self._bb_price_list) > 10:
+                if self._bn_price_changed and (self._have_placed_order == 0.) and len(self._bb_price_list) > 10:
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
@@ -197,7 +197,8 @@ class HFTStrategy(ZMBase):
         平仓
         :return:
         """
-        pass
+        if self._have_placed_order == 0.:
+            return # 没有下单, 没有仓位
 
 
 if __name__ == '__main__':
