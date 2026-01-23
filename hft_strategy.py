@@ -88,6 +88,12 @@ class HFTStrategy(ZMBase):
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
                 if (last_bn_update_id == self._bn_ws_api.update_id) or (self._bitget_ws_api.update_id == -1):
                     continue
+                if time.time() - self._bitget_ws_api.update_id > 180: # 3min没有更新
+                    self.send_wechat(self._mail_to, 'Bitget数据长时间未更新', self._bitget_ws_api.update_id)
+                    # 重建http连接
+                    await asyncio.sleep(10)
+                    continue
+
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
                 if self._bn_price_changed:
