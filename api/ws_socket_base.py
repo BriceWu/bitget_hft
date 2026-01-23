@@ -20,15 +20,15 @@ class WSSocketBase(ZMBase):
         self.update_id = -1
 
     async def init_connection(self, time_out):
-        self.close()
+        await self.close()
         ssl_context = ssl._create_unverified_context()
         # ssl_context = ssl.create_default_context()
         self.ws_client = await websockets.connect(self._ws_url, ssl=ssl_context, open_timeout=time_out)
         self._logger.info(f"[{self._tgt_platform}, {self._symbol}]ws初始化")
 
-    def close(self):
+    async def close(self):
         if self.ws_client:
-            self.ws_client.close()
+            await self.ws_client.close()
 
     async def start_ws(self):
         while True:
