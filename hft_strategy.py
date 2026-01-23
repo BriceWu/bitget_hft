@@ -105,9 +105,9 @@ class HFTStrategy(ZMBase):
                 self.analysis_bn_bs_one()
                 if self._bn_price_changed and len(self._bb_price_list) > 10:
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
-                        self.open_sell()
+                        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
                     elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
-                        self.open_buy()
+                        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
                 self.update_price_rate()
@@ -186,13 +186,6 @@ class HFTStrategy(ZMBase):
     def update_order_vol(self):
         self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = int(time.time()*1000)
-
-    def open_sell(self):
-        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
-
-    def open_buy(self):
-        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
-
 
 
 if __name__ == '__main__':
