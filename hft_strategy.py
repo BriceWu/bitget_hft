@@ -1,5 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
+import time
 import traceback, socket, http.client, os, sys, asyncio, orjson
 from zmqfsi.util.zm_client import ZMClient
 from multiprocessing import Process, Value
@@ -117,7 +118,8 @@ class HFTStrategy(ZMBase):
         self._bitget_bid_one = float(data['bids'][0][0])
 
     def update_price_rate(self):
-        if len(self._sell_price_list) > 1:
+        if time.time() - self._last_price_list_update_time < 600:  # 10min记一次
+            return 
 
 
 if __name__ == '__main__':
