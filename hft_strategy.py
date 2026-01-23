@@ -44,6 +44,7 @@ class HFTStrategy(ZMBase):
         self._buy_profit_rate = None  # bn_bid / bitget_ask
         self._sell_price_list = None  # [(bn_ask, bitget_bid), (bn_ask, bitget_bid) ......]
         self._buy_price_list = None   # [(bn_bid / bitget_ask), (bn_bid / bitget_ask) ......]
+        self._last_price_list_update_time = 0
 
     def init_params(self):
         try:
@@ -114,6 +115,9 @@ class HFTStrategy(ZMBase):
         data = val['data'][0]
         self._bitget_ask_one = float(data['asks'][0][0])
         self._bitget_bid_one = float(data['bids'][0][0])
+
+    def update_price_rate(self):
+        if len(self._sell_price_list) > 1:
 
 
 if __name__ == '__main__':
