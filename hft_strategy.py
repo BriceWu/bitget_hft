@@ -98,9 +98,9 @@ class HFTStrategy(ZMBase):
                 self.analysis_bn_bs_one()
                 if self._bn_price_changed:
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
-                        pass   # 开空
+                        self.open_sell()
                     elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
-                        pass   # 开多
+                        self.open_buy()
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
                 self.update_price_rate()
@@ -176,10 +176,10 @@ class HFTStrategy(ZMBase):
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
 
     def open_sell(self):
-        pass
+        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol, p_side="sell", p_client_id)
 
     def open_buy(self):
-        pass
+        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol, p_side="buy", p_client_id)
 
 
 
