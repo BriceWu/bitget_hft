@@ -51,6 +51,9 @@ class HFTStrategy(ZMBase):
         self.sum_bitget_buy = 0.
         self._last_price_list_update_time = 0
 
+        self._order_vol = None
+        self._client_open_order_id = None
+
     def init_params(self):
         try:
             self.sum_bn_sell = 0.
