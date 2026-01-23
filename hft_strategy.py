@@ -93,6 +93,7 @@ class HFTStrategy(ZMBase):
                 if self._bn_price_changed:
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
+                self.update_price_rate()
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
@@ -141,7 +142,7 @@ class HFTStrategy(ZMBase):
 
         self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
         self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
-        
+
         bn_sell = 0.
         bn_buy = 0.
         bitget_sell = 0.
