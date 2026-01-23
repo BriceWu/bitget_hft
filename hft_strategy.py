@@ -104,6 +104,7 @@ class HFTStrategy(ZMBase):
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
                 self.update_price_rate()
+                self.update_order_vol()
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
                 self._logger.error(err_msg)
@@ -174,6 +175,9 @@ class HFTStrategy(ZMBase):
             self._logger.error(f'bitget_buy:{self.sum_bitget_buy}, {bitget_buy}')
         self._sell_profit_rate = self.sum_bn_sell / self.sum_bitget_buy
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
+
+    def update_order_vol(self):
+        pass
 
     def open_sell(self):
         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol, p_side="sell", p_client_id)
