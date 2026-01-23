@@ -47,7 +47,7 @@ class HFTStrategy(ZMBase):
         self._bb_price_list = None  # [(bn_ask, bn_bid, bitget_ask, bitget_bid), (bn_ask, bn_bid, bitget_ask, bitget_bid) ......]
         self.sum_bn_sell = 0.
         self.sum_bn_buy = 0.
-        self.bitget_sell = 0.
+        self.sum_bitget_sell = 0.
         self.sum_bitget_buy = 0.
         self._last_price_list_update_time = 0
 
@@ -55,7 +55,7 @@ class HFTStrategy(ZMBase):
         try:
             self.sum_bn_sell = 0.
             self.sum_bn_buy = 0.
-            self.bitget_sell = 0.
+            self.sum_bitget_sell = 0.
             self.sum_bitget_buy = 0.
             self._bb_price_list = []
             ZMClient.set('logger', self._logger)
@@ -143,12 +143,12 @@ class HFTStrategy(ZMBase):
             old = self._bb_price_list.pop(0)
             self.sum_bn_sell -= old[0]
             self.sum_bn_buy -= old[1]
-            self.bitget_sell -= old[2]
+            self.sum_bitget_sell -= old[2]
             self.sum_bitget_buy -= old[3]
 
         self.sum_bn_sell += self._bn_ask_one
         self.sum_bn_buy += self._bn_bid_one
-        self.bitget_sell += self._bitget_ask_one
+        self.sum_bitget_sell += self._bitget_ask_one
         self.sum_bitget_buy += self._bitget_bid_one
 
         self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
@@ -168,8 +168,8 @@ class HFTStrategy(ZMBase):
             self._logger.error(f'bn_sell:{self.sum_bn_sell}, {bn_sell}')
         if abs(self.sum_bn_buy-bn_buy) > POSITIVE_ZERO:
             self._logger.error(f'bn_buy:{self.sum_bn_buy}, {bn_buy}')
-        if abs(self.bitget_sell-bitget_sell) > POSITIVE_ZERO:
-            self._logger.error(f'bitget_sell:{self.bitget_sell}, {bitget_sell}')
+        if abs(self.sum_bitget_sell-bitget_sell) > POSITIVE_ZERO:
+            self._logger.error(f'bitget_sell:{self.sum_bitget_sell}, {bitget_sell}')
         if abs(self.sum_bitget_buy-bitget_buy) > POSITIVE_ZERO:
             self._logger.error(f'bitget_buy:{self.sum_bitget_buy}, {bitget_buy}')
         self._sell_profit_rate = bn_sell / bitget_buy
