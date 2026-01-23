@@ -118,8 +118,12 @@ class HFTStrategy(ZMBase):
         self._bitget_bid_one = float(data['bids'][0][0])
 
     def update_price_rate(self):
-        if time.time() - self._last_price_list_update_time < 600:  # 10min记一次
-            return 
+        if time.time() - self._last_price_list_update_time < 150:  # 2.5min记一次
+            return
+        if len(self._sell_price_list) > 575:  # 1天
+            self._sell_price_list.pop(0)
+            self._buy_price_list.pop(0)
+        self._sell_price_list.append((self._bn_ask_one, self._bn_bid_one))
 
 
 if __name__ == '__main__':
