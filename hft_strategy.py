@@ -12,6 +12,7 @@ from volume_monitor import VolumeMonitor
 from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
 from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
+from zmqfsi.model.number import POSITIVE_ZERO
 
 def __volume_monitor(env, symbol, volume_rate, trade_side):
     RunEnv.set_run_env(env)
@@ -127,7 +128,17 @@ class HFTStrategy(ZMBase):
         if time.time() - self._last_price_list_update_time < 150:  # 2.5min记一次
             return
         if len(self._bb_price_list) > 575:  # 1天
-            self._bb_price_list.pop(0)
+            old = self._bb_price_list.pop(0)
+            self.bn_sell -= old[0]
+            self.bn_buy -= old[1]
+            self.bitget_sell -= old[2]
+            self.bitget_buy -= old[3]
+
+        self.bn_sell += self._bn_ask_one
+        self.bn_buy += self._bn_bid_one
+        self.bitget_sell += self._bitget_ask_one
+        self.bitget_buy += self._bitget_bid_one
+
         self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
         self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
         bn_sell = 0.
@@ -139,6 +150,15 @@ class HFTStrategy(ZMBase):
             bn_buy += _bn_bid_one
             bitget_sell += _bitget_ask_one
             bitget_buy += _bitget_bid_one
+
+        if abs(self.bn_sell-bn_sell) > POSITIVE_ZERO:
+            self._logger.error(f'bn_sell:{self.bn_sell}, {bn_sell}')
+        if abs(self.bn_buy-bn_buy) > POSITIVE_ZERO:
+            self._logger.error(f'bn_buy:{self.bn_buy}, {bn_buy}')
+        if abs(self.bitget_sell-bitget_sell) > POSITIVE_ZERO:
+            self._logger.error(f'bitget_sell:{self.bitget_sell}, {bitget_sell}')
+        if abs(self.bitget_buy-bitget_buy) > POSITIVE_ZERO:
+            self._logger.error(f'bitget_buy:{self.bitget_buy}, {bitget_buy}')
         self._sell_profit_rate = bn_sell / bitget_buy
         self._buy_profit_rate = bn_buy / bitget_sell
 
