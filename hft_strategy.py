@@ -147,6 +147,7 @@ class HFTStrategy(ZMBase):
         if time.time() - self._last_price_list_update_time < 150:  # 2.5min记一次
             return
         self._last_price_list_update_time = time.time()
+        self._rest_api.init_https_connection()
         if len(self._bb_price_list) > 575:  # 1天
             old = self._bb_price_list.pop(0)
             self.sum_bn_sell -= old[0]
