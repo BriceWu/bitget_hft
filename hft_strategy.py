@@ -43,14 +43,12 @@ class HFTStrategy(ZMBase):
 
         self._sell_profit_rate = None  # bn_ask / bitget_bid
         self._buy_profit_rate = None  # bn_bid / bitget_ask
-        self._sell_price_list = None  # [(bn_ask, bitget_bid), (bn_ask, bitget_bid) ......]
-        self._buy_price_list = None   # [(bn_bid / bitget_ask), (bn_bid / bitget_ask) ......]
+        self._bb_price_list = None  # [(bn_ask, bn_bid, bitget_ask, bitget_bid), (bn_ask, bn_bid, bitget_ask, bitget_bid) ......]
         self._last_price_list_update_time = 0
 
     def init_params(self):
         try:
-            self._sell_price_list = []
-            self._buy_price_list = []
+            self._bb_price_list = []
             ZMClient.set('logger', self._logger)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
             if self._run_env == 'test':
@@ -120,10 +118,10 @@ class HFTStrategy(ZMBase):
     def update_price_rate(self):
         if time.time() - self._last_price_list_update_time < 150:  # 2.5min记一次
             return
-        if len(self._sell_price_list) > 575:  # 1天
-            self._sell_price_list.pop(0)
-            self._buy_price_list.pop(0)
-        self._sell_price_list.append((self._bn_ask_one, self._bn_bid_one))
+        if len(self._bb_price_list) > 575:  # 1天
+            self._bb_price_list.pop(0)
+        self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
+        self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
 
 
 if __name__ == '__main__':
