@@ -175,6 +175,12 @@ class HFTStrategy(ZMBase):
         self._sell_profit_rate = self.sum_bn_sell / self.sum_bitget_buy
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
 
+    def open_sell(self):
+        pass
+
+    def open_buy(self):
+        pass
+
 
 
 if __name__ == '__main__':
