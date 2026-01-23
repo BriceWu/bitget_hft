@@ -172,8 +172,8 @@ class HFTStrategy(ZMBase):
             self._logger.error(f'bitget_sell:{self.sum_bitget_sell}, {bitget_sell}')
         if abs(self.sum_bitget_buy-bitget_buy) > POSITIVE_ZERO:
             self._logger.error(f'bitget_buy:{self.sum_bitget_buy}, {bitget_buy}')
-        self._sell_profit_rate = bn_sell / bitget_buy
-        self._buy_profit_rate = bn_buy / bitget_sell
+        self._sell_profit_rate = self.sum_bn_sell / self.sum_bitget_buy
+        self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
 
 
 
