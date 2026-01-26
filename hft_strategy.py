@@ -58,7 +58,6 @@ class HFTStrategy(ZMBase):
 
         self._pre_accuracy = 5
         self._have_placed_order = 0.  # 下开仓单
-        self._have_placed_close_position_order = 0.  # 下平仓单
 
     def init_params(self):
         try:
@@ -217,7 +216,6 @@ class HFTStrategy(ZMBase):
         if posi_vol == '0':
             self._logger.info(f"当前没有持仓")
             self._have_placed_order = 0.
-            self._have_placed_close_position_order = 0.
             return
         if posi_side == 1:
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
@@ -228,7 +226,7 @@ class HFTStrategy(ZMBase):
             self._logger.error(error_msg)
             raise Exception(error_msg)
         self._logger.info("平仓：" + json.dumps(close_result))
-        self._have_placed_close_position_order = time.time()
+        await asyncio.sleep(0.3)
 
     def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
