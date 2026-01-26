@@ -57,7 +57,8 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = None
 
         self._pre_accuracy = 5
-        self._have_placed_order = 0.
+        self._have_placed_order = 0.  # 下开仓单
+        self._have_placed_close_position_order = 0.  # 下平仓单
 
     def init_params(self):
         try:
