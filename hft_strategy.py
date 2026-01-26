@@ -120,10 +120,12 @@ class HFTStrategy(ZMBase):
                     if (0.25 > self.v_trade_side.value > 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998):
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
+                        self.send_wechat(self._mail_to, "HFT开空", self._bitget_bid_one)
                         await self.cancel_client_order()
                     elif (self.v_trade_side.value > 0.75) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002):
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
+                        self.send_wechat(self._mail_to, "HFT开多", self._bitget_ask_one)
                         await self.cancel_client_order()
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
