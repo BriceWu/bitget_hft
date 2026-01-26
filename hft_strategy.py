@@ -258,7 +258,7 @@ class HFTStrategy(ZMBase):
 if __name__ == '__main__':
     RunEnv.set_run_env(argv[1])
     _env = RunEnv.get_run_env()
-    _symbol = "doge_usdt"
+    _symbol = argv[2]
     _mark = "xyz369free"
     v_trade_side = Value('d', 0)
     v_volume_rate = Value('d', 0)
