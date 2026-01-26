@@ -217,15 +217,18 @@ class HFTStrategy(ZMBase):
         if posi_vol == '0':
             self._logger.info(f"当前没有持仓")
             self._have_placed_order = 0.
+            self._have_placed_close_position_order = 0.
             return
         if posi_side == 1:
-            self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
+            close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
         elif posi_side == -1:
-            self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy')
+            close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy')
         else:
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
             raise Exception(error_msg)
+        self._logger.info("平仓：" + json.dumps(close_result))
+        self._have_placed_close_position_order = time.time()
 
     def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
