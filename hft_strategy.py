@@ -273,6 +273,23 @@ class HFTStrategy(ZMBase):
         else:
             return position['total'], -1
 
+    async def check_position(self):
+        while True:
+            try:
+                posi_vol, posi_side = self.analysis_position_info()
+                if posi_vol is None:
+                    self._logger.error(f"获取[{self._symbol}]失败")
+                    await asyncio.sleep(0.5)
+                    continue
+                if posi_vol == '0':
+                    self._logger.info("当前没有持仓")
+                    self._have_placed_order = 0.
+                    return
+                self._have_placed_order = 1
+                return
+            except Exception as e:
+                pass
+
 
 
 if __name__ == '__main__':
