@@ -53,6 +53,8 @@ class HFTStrategy(ZMBase):
         self.sum_bitget_sell = 0.
         self.sum_bitget_buy = 0.
         self._last_price_list_update_time = 0
+        self._price_rate_update_interval = 150
+        self._bb_price_list_max_len = int(24 * 60 * 60 / self._price_rate_update_interval)
 
         self._order_vol = None
         self._client_open_order_id = None
@@ -167,11 +169,11 @@ class HFTStrategy(ZMBase):
         self._bitget_bid_one = float(data['bids'][0][0])
 
     def update_price_rate(self):
-        if time.time() - self._last_price_list_update_time < 150:  # 2.5min记一次
+        if time.time() - self._last_price_list_update_time < self._price_rate_update_interval:  # 2.5min记一次
             return
         self._last_price_list_update_time = time.time()
         self._rest_api.init_https_connection()
-        if len(self._bb_price_list) > 575:  # 1天
+        if len(self._bb_price_list) > self._bb_price_list_max_len:  # 1天
             old = self._bb_price_list.pop(0)
             self.sum_bn_sell -= old[0]
             self.sum_bn_buy -= old[1]
