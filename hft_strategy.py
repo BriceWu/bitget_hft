@@ -113,12 +113,12 @@ class HFTStrategy(ZMBase):
                     continue
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
-                if self._bn_price_changed and (self._have_placed_order == 0.) and (self.v_volume_rate >1.) and len(self._bb_price_list) > 10:
-                    if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
+                if self._bn_price_changed and (self._have_placed_order == 0.) and (self.v_volume_rate.value >1.) and len(self._bb_price_list) > 10:
+                    if (0.25 > self.v_trade_side.value > 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998):
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
                         await self.cancel_client_order()
-                    elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
+                    elif (self.v_trade_side.value > 0.75) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002):
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
                         await self.cancel_client_order()
