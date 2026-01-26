@@ -210,7 +210,36 @@ class HFTStrategy(ZMBase):
             return # 没有下单, 没有仓位
         if time.time() - self._have_placed_order < 5:  # 5s
             return
-        self._rest_api.get_position()
+        posi_vol, posi_side = self.analysis_position_info()
+        if posi_vol is None:
+            return
+        if posi_vol == '0':
+            self._logger.info(f"当前没有持仓")
+            self._have_placed_order = 0.
+            return
+        if posi_side == 1:
+            pass
+        elif posi_side == -1:
+            pass
+        else:
+            error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
+            self._logger.error(error_msg)
+            raise Exception(error_msg)
+
+    def analysis_position_info(self):
+        positon_info = self._rest_api.get_position_info()
+        self._logger.info(positon_info)
+        if not positon_info:
+            self._logger.error("获取交易对仓位失败......")
+            return None, 1
+        data = positon_info['data']
+        if not data:
+            return '0', 1
+        position = data[0]
+        if position['holdSide'] == 'long':
+            return position['total'], 1
+        else:
+            return position['total'], -1
 
 
 
