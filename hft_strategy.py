@@ -1,6 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
-import time
+import time, json
 import traceback, socket, http.client, os, sys, asyncio, orjson
 from zmqfsi.util.zm_client import ZMClient
 from multiprocessing import Process, Value
@@ -107,9 +107,11 @@ class HFTStrategy(ZMBase):
                     if self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate * 0.9998:
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
+                        await self.cancel_client_order()
                     elif self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate * 1.0002:
                         self._have_placed_order = last_time
                         self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
+                        await self.cancel_client_order()
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
                 self.update_price_rate()
@@ -193,6 +195,12 @@ class HFTStrategy(ZMBase):
         self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = int(time.time()*1000)
 
+    async def cancel_client_order(self):
+        for _ in range(2):
+            await asyncio.sleep(0.5)
+            result = self._rest_api.cancel_order(self._client_open_order_id)
+            self._logger.error(json.dumps(result))
+
     def close_position(self):
         """
         平仓
@@ -202,7 +210,6 @@ class HFTStrategy(ZMBase):
             return # 没有下单, 没有仓位
         if time.time() - self._have_placed_order < 5:  # 5s
             return
-        self._rest_api
 
 
 if __name__ == '__main__':
