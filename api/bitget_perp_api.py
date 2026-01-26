@@ -81,7 +81,7 @@ class BitgetPerpApi(AccountBase):
         :param p_client_id:
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{p_client_id}"}}'.encode()
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"isolated","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","clientOid":"{p_client_id}"}}'
         return self.http_post("/api/v2/mix/order/place-order", body)
 
     def make_close_order(self, p_price, p_vol, p_side):
@@ -92,7 +92,7 @@ class BitgetPerpApi(AccountBase):
         :param p_side:
         :return:
         """
-        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"crossed","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES"}}'.encode()
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"isolated","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES"}}'
         return self.http_post("/api/v2/mix/order/place-order", body)
 
     def cancel_order(self, p_client_id):
