@@ -245,10 +245,12 @@ class HFTStrategy(ZMBase):
             if self._last_close_price <= self._bitget_ask_one:
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
+            self._last_close_price = self._bitget_ask_one
         elif posi_side == -1:
             if self._last_close_price >= self._bitget_bid_one:
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy')
+            self._last_close_price = self._bitget_bid_one
         else:
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
