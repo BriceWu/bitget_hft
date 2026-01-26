@@ -74,12 +74,21 @@ class HFTStrategy(ZMBase):
                 socket.socket = socks.socksocket
             self._bn_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._bitget_ws_api = BitgetPerpWSApiAsync(self._symbol)
+            self.init_api_config(30)
             return
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
             self._logger.error(error_info)
             self.send_wechat(self._mail_to, "HFT策略异常", error_info)
             raise
+
+    def init_api_config(self, leverage):
+        result = self._rest_api.change_position_mode()  # 单向持仓
+        self._logger.info(json.dumps(result))
+        result2 = self._rest_api.change_margin_mode()  # 逐仓
+        self._logger.info(json.dumps(result2))
+        result3 = self._rest_api.adjust_leverage(leverage)
+        self._logger.info(json.dumps(result3))
 
     async def run_tasks(self):
         self.init_params()
