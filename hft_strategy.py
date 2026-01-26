@@ -107,6 +107,7 @@ class HFTStrategy(ZMBase):
                 if (last_bn_update_id == self._bn_ws_api.update_id) or (self._bitget_ws_api.update_id == -1):
                     if time.time() - self._bitget_ws_api.last_ping_time > 30:  # 30s ping一次
                         await self._bitget_ws_api.ws_client.send("ping")
+                        self._logger.info(f"Bitget ws ping")
                         self._bitget_ws_api.last_ping_time = time.time()
                     continue
                 if time.time() - self._bitget_ws_api.update_id > 180: # 3min没有更新
@@ -156,6 +157,8 @@ class HFTStrategy(ZMBase):
         self._bn_bid_one = float(data['b'])
 
     def analysis_bitget_ws_one(self):
+        if self._bitget_ws_api.ws_message[0] == 'p':
+            return # 'pong'
         val = orjson.loads(self._bitget_ws_api.ws_message)
         data = val['data'][0]
         self._bitget_ask_one = float(data['asks'][0][0])
