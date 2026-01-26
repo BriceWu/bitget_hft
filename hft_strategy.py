@@ -14,7 +14,7 @@ from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
 from zmqfsi.model.number import POSITIVE_ZERO
 
-ORDER_AMOUNT = 50
+ORDER_AMOUNT = 30
 
 def __volume_monitor(env, symbol, volume_rate, trade_side):
     RunEnv.set_run_env(env)
