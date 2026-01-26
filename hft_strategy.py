@@ -105,6 +105,7 @@ class HFTStrategy(ZMBase):
     async def start_hft(self):
         last_time = 0
         last_bn_update_id = -1
+        await self.check_position()
         while True:
             try:
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
