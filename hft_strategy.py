@@ -284,7 +284,7 @@ class HFTStrategy(ZMBase):
                     await asyncio.sleep(0.5)
                     continue
                 if posi_vol == '0':
-                    self._logger.info("当前没有持仓")
+                    self._logger.info("检查仓位：当前没有持仓")
                     self._have_placed_order = 0.
                     return
                 self._have_placed_order = 1
