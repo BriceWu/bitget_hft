@@ -1,5 +1,6 @@
 #!/usr/bin/python3.13
 # -*- coding:utf-8 -*-
+from sys import argv
 import time, json
 import traceback, socket, http.client, os, sys, asyncio, orjson
 from zmqfsi.util.zm_client import ZMClient
@@ -255,7 +256,7 @@ class HFTStrategy(ZMBase):
 
 
 if __name__ == '__main__':
-    RunEnv.set_run_env('test')
+    RunEnv.set_run_env(argv[1])
     _env = RunEnv.get_run_env()
     _symbol = "doge_usdt"
     _mark = "xyz369free"
