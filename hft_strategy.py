@@ -241,6 +241,7 @@ class HFTStrategy(ZMBase):
         if posi_vol == '0':
             self._logger.info("当前没有持仓")
             self._have_placed_order = 0.
+            await asyncio.sleep(60)
             return
         if posi_side == 1:
             if self._last_close_price <= self._bitget_ask_one:
