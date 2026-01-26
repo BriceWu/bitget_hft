@@ -115,7 +115,7 @@ class HFTStrategy(ZMBase):
                     self._logger.info(f"BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                 last_bn_update_id = self._bn_ws_api.update_id
                 self.update_price_rate()
-                self.close_position()
+                await self.close_position()
                 self.update_order_vol()
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
@@ -201,7 +201,7 @@ class HFTStrategy(ZMBase):
             result = self._rest_api.cancel_order(self._client_open_order_id)
             self._logger.error(json.dumps(result))
 
-    def close_position(self):
+    async def close_position(self):
         """
         平仓
         :return:
@@ -210,6 +210,8 @@ class HFTStrategy(ZMBase):
             return # 没有下单, 没有仓位
         if time.time() - self._have_placed_order < 5:  # 5s
             return
+        self._rest_api.get_position()
+
 
 
 if __name__ == '__main__':
