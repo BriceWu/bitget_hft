@@ -65,9 +65,9 @@ class BitgetPerpApi(AccountBase):
         if self._https_client:
             self._https_client.close()
         if self._run_env != "test":
-            https_conn = http.client.HTTPSConnection(self._host_address, timeout=10)
+            https_conn = http.client.HTTPSConnection(self._host_address, timeout=3)
         else:
-            https_conn = http.client.HTTPSConnection("127.0.0.1", port=10809, timeout=10)
+            https_conn = http.client.HTTPSConnection("127.0.0.1", port=10809, timeout=30)
             https_conn.set_tunnel(self._host_address)
         self._https_client = https_conn
 

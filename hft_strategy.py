@@ -71,13 +71,13 @@ class HFTStrategy(ZMBase):
             self._bb_price_list = []
             ZMClient.set('logger', self._logger)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
+            self.init_api_config(30)
             if self._run_env == 'test':
                 import socks, socket
                 socks.set_default_proxy(socks.HTTP, "127.0.0.1", 10809)  # 设置全局代理
                 socket.socket = socks.socksocket
             self._bn_ws_api = BinancePerpWSApiAsync(self._symbol)
             self._bitget_ws_api = BitgetPerpWSApiAsync(self._symbol)
-            self.init_api_config(30)
             return
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
@@ -108,7 +108,7 @@ class HFTStrategy(ZMBase):
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
                 if (last_bn_update_id == self._bn_ws_api.update_id) or (self._bitget_ws_api.update_id == -1):
                     if time.time() - self._bitget_last_ping_time > 30:  # 30s ping一次
-                        self._bitget_ws_api.ws_client.send("ping")
+                        await self._bitget_ws_api.ws_client.send("ping")
                         self._bitget_last_ping_time = time.time()
                     continue
                 if time.time() - self._bitget_ws_api.update_id > 180: # 3min没有更新
