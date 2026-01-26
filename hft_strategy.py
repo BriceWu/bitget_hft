@@ -288,7 +288,9 @@ class HFTStrategy(ZMBase):
                 self._have_placed_order = 1
                 return
             except Exception as e:
-                pass
+                error_info = "%s,%s" % (e, traceback.format_exc())
+                self._logger.error(error_info)
+                await asyncio.sleep(1.5)
 
 
 
