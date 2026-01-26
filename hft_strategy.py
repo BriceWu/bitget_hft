@@ -222,7 +222,7 @@ class HFTStrategy(ZMBase):
 
     async def cancel_client_order(self):
         for _ in range(2):
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(1)
             result = self._rest_api.cancel_order(self._client_open_order_id)
             self._logger.error(json.dumps(result))
 
