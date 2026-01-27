@@ -233,7 +233,7 @@ class HFTStrategy(ZMBase):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
-        if time.time() - self._have_placed_order < 8:  # 8s
+        if time.time() - self._have_placed_order < 30:  # 8s
             return
         posi_vol, posi_side = await self.analysis_position_info()
         if posi_vol is None:
