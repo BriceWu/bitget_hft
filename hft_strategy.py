@@ -237,6 +237,7 @@ class HFTStrategy(ZMBase):
             return
         posi_vol, posi_side = await self.analysis_position_info()
         if posi_vol is None:
+            await asyncio.sleep(0.1)
             return
         if posi_vol == '0':
             self._logger.info("当前没有持仓")
@@ -245,11 +246,13 @@ class HFTStrategy(ZMBase):
             return
         if posi_side == 1:
             if self._last_close_price <= self._bitget_ask_one:
+                await asyncio.sleep(0.3)
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
             self._last_close_price = self._bitget_ask_one
         elif posi_side == -1:
             if self._last_close_price >= self._bitget_bid_one:
+                await asyncio.sleep(0.3)
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy')
             self._last_close_price = self._bitget_bid_one
