@@ -260,12 +260,23 @@ class HFTStrategy(ZMBase):
         self._logger.info("平仓：" + json.dumps(close_result))
         await asyncio.sleep(0.3)
 
-    def analysis_position_info(self):
+    async def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
         self._logger.info(json.dumps(positon_info))
         if not positon_info:
             self._logger.error("获取交易对仓位失败......")
             return None, 1
+
+        posi_code = positon_info['code']
+        if posi_code == '429':  # 限流
+            await asyncio.sleep(1)
+            return None, 1
+
+        if posi_code != '00000':
+            self.send_wechat(self._mail_to, "仓位接口异常", positon_info)
+            await asyncio.sleep(3)
+            return None, 1
+
         data = positon_info['data']
         if not data:
             return '0', 1
