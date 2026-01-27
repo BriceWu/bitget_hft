@@ -246,12 +246,14 @@ class HFTStrategy(ZMBase):
             return
         if posi_side == 1:
             if self._last_close_price <= self._bitget_ask_one:
+                self._logger.info(f"上一轮平仓价：{self._last_close_price} <= 卖一价：{self._bitget_ask_one}")
                 await asyncio.sleep(0.3)
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell')
             self._last_close_price = self._bitget_ask_one
         elif posi_side == -1:
             if self._last_close_price >= self._bitget_bid_one:
+                self._logger.info(f"上一轮平仓价：{self._last_close_price} >= 买一价{self._bitget_bid_one}")
                 await asyncio.sleep(0.3)
                 return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy')
