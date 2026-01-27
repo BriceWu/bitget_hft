@@ -283,7 +283,7 @@ class HFTStrategy(ZMBase):
             return None, 1
 
         data = positon_info['data']
-        if not data:
+        if data == []:
             return '0', 1
         position = data[0]
         if position['holdSide'] == 'long':
