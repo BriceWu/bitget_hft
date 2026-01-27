@@ -263,7 +263,7 @@ class HFTStrategy(ZMBase):
             self._logger.error(error_msg)
             raise Exception(error_msg)
         self._logger.info(f"平仓[{self._last_close_price}]：{json.dumps(close_result)}")
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(1.5)
 
     async def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
