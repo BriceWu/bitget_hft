@@ -262,7 +262,7 @@ class HFTStrategy(ZMBase):
 
     def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
-        self._logger.info(positon_info)
+        self._logger.info(json.dumps(positon_info))
         if not positon_info:
             self._logger.error("获取交易对仓位失败......")
             return None, 1
