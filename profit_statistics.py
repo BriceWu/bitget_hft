@@ -118,7 +118,7 @@ class ProfitStatistics(ZMBase):
         return trade_rows
 
     def do_statistics_operation(self):
-        statistics_sleep_time = 20*60
+        statistics_sleep_time = 30*60
         last_time = 0
         while True:
             try:
