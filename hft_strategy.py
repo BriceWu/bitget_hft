@@ -31,6 +31,7 @@ class HFTStrategy(ZMBase):
         """
         ZMBase.__init__(self)
         self._symbol = symbol
+        self._coin = None
         self._mark = mark
         self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}_{self._mark}')
         self.v_volume_rate = volume_rate
@@ -58,6 +59,7 @@ class HFTStrategy(ZMBase):
 
         self._order_vol = None
         self._client_open_order_id = None
+        self._client_close_order_id = None
 
         self._pre_accuracy = 5
         self._have_placed_order = 0.  # 下开仓单
@@ -66,6 +68,7 @@ class HFTStrategy(ZMBase):
 
     def init_params(self):
         try:
+            self._coin = self._symbol.split("_")[0]
             self.sum_bn_sell = 0.
             self.sum_bn_buy = 0.
             self.sum_bitget_sell = 0.
@@ -310,6 +313,8 @@ class HFTStrategy(ZMBase):
                 self._logger.error(error_info)
                 await asyncio.sleep(1.5)
 
+    def update_close_client_order_id(self):
+        self._client_close_order_id = f"c_{int(time.time()*1000)}"
 
 
 if __name__ == '__main__':
