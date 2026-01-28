@@ -20,7 +20,7 @@ class ProfitStatistics(ZMBase):
     def start(self):
         self.do_statistics_operation()
 
-    def statistics_profit_data(self, msg_dic):
+    def statistics_profit_data(self):
         time_now = int(time.time() * 1000)
         rows_item = self.query_cash_flow()
         trading_fee = 0.
@@ -71,7 +71,7 @@ class ProfitStatistics(ZMBase):
                 trading_profit_liquidation_2d = trading_profit_liquidation
                 trading_profit_long_2d = trading_profit_long
                 trading_profit_short_2d = trading_profit_short
-
+        msg_dic = {}
         msg_dic['LongProfit'] = round(trading_profit_long, 2)
         msg_dic['ShortProfit'] = round(trading_profit_short, 2)
         msg_dic['TradingFee'] = trading_fee
@@ -124,7 +124,7 @@ class ProfitStatistics(ZMBase):
             try:
                 last_time = self.process_sleep(last_time, cyc_time=statistics_sleep_time)
                 self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
-                self.statistics_account_profit()
+                self.statistics_profit_data()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.info(error_info)
