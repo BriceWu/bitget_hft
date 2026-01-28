@@ -221,7 +221,7 @@ class HFTStrategy(ZMBase):
         if self._have_placed_order != 0.:  # 下单了, 则不更新
             return
         self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
-        self._client_open_order_id = int(time.time()*1000)
+        self._client_open_order_id = f"{self._coin}{int(time.time()*1000)}"
 
     async def cancel_client_order(self):
         for _ in range(2):
@@ -314,7 +314,7 @@ class HFTStrategy(ZMBase):
                 await asyncio.sleep(1.5)
 
     def update_close_client_order_id(self):
-        self._client_close_order_id = f"c_{int(time.time()*1000)}"
+        self._client_close_order_id = f"{self._coin}{int(time.time()*1000)}c"
 
 
 if __name__ == '__main__':
