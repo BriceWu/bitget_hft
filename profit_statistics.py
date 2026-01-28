@@ -27,50 +27,18 @@ class BitgetAccountStatistics(ZMBase):
         self._api_user_id = None
         self._position_key = None
         self._server = None
-        self._biz_mongo = None
-        self._trade_redis = None
-        self._asset_key = None
-        self._small_cycle_time = 4 * 1000
-
-        self._position_cyc_time = POSITION_TIME_OUT_MS * 0.4
 
     def start(self):
         self.init_params()
-        threading.Thread(target=self.set_inside_position).start()
         self.do_statistics_operation()
 
     def do_statistics_operation(self):
-        statistics_sleep_time = 10*60
-        last_statistics_time = time.time() - statistics_sleep_time
+        statistics_sleep_time = 20*60
         last_time = 0
-        try:
-            symbol = "xrp_usdt"
-            # _this_web_api = BitgetWebApi(self._display_symbol, symbol, self._logger)
-            # _this_web_api.init_backup_socket()
-            # _this_web_api.set_open_hedge_mode_order_str(3, 3, f"{symbol.replace('_','')}{int(time.time()*1000)}")
-            # self._logger.error(_this_web_api._open_hedge_mode_short_str)
-            # body = _this_web_api.open_hedge_mode_short_order(p_price=2.3, tp_price=2.2, tp_trigger=2.25, st_trigger=2.4)
-            # self._logger.error(f"web开空：{json.dumps(body)}")
-        except Exception as e:
-            error_info = "%s,%s" % (e, traceback.format_exc())
-            self._logger.info(error_info)
         while True:
             try:
-                last_time = self.process_sleep(last_time, cyc_time=self._small_cycle_time)
-                account_info, asset_free = self.analysis_account_info()
-                if account_info is None:
-                    time.sleep(2 * 60)
-                    self._this_rest_api.init_http_connection()
-                    continue
-                if time.time() - last_statistics_time >= statistics_sleep_time:
-                    last_statistics_time = time.time()
-                    threading.Thread(target=self.statistics_account_profit).start()
-            except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest, ConnectionResetError)  as e:
-                err_msg = repr(e)
-                self._logger.error(err_msg)
-                self.send_wechat(self._mail_to, f"Account Equity Exception[{self._server}]", err_msg)
-                self._this_rest_api.init_http_connection()
-                time.sleep(5)
+                last_time = self.process_sleep(last_time, cyc_time=statistics_sleep_time)
+                self.statistics_account_profit()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.info(error_info)
@@ -258,22 +226,6 @@ class BitgetAccountStatistics(ZMBase):
             msg_dic['Frozen'] = asset['frozen']
         return msg_dic
 
-    def get_spot_account_assets(self):
-        """
-        获取现货资产
-        :return:
-        """
-        spot_asset = self._statistics_rest_api.get_spot_assets()
-        data = spot_asset['data']
-        asset_dic = {}
-        for item in data:
-            coin = item['coin']
-            val = float(item["available"]) + float(item["frozen"])
-            asset_dic[coin] = val
-        # if asset_dic:
-        #     self.send_wechat(self._mail_to, "Spot Asset", asset_dic)
-        return asset_dic
-
     def init_params(self):
         try:
             self._biz_mongo = ZMClient.get('biz_mongo')
@@ -290,35 +242,6 @@ class BitgetAccountStatistics(ZMBase):
             self._logger.info(error_info)
             self.send_wechat(self._mail_to, f'Init Exception[{self._server}]', error_info)
             time.sleep(15)
-
-    def analysis_account_info(self):
-        account_info = self._this_rest_api.get_account_info()
-        if not account_info:
-            time.sleep(1)
-            account_info = self._this_rest_api.get_account_info()
-        if (not account_info) or (account_info.get("code") != '00000'):
-            msg = "账户资金获取失败" if (not account_info) else json.dumps(account_info)
-            self._logger.error(msg)
-            self.send_wechat(self._mail_to, "账户资金获取失败", msg)
-            return None, None
-        asset_free = self.set_usdt_equity(account_info)
-        return account_info, asset_free
-
-    def set_usdt_equity(self, account_info):
-        # self._logger.info(json.dumps(account_info))
-        balance = account_info['data'][0]
-        equity = float(balance['accountEquity'])
-        usdt_equity = float(balance['usdtEquity'])
-        if equity and abs(usdt_equity / equity -1) > 0.00001:  # 十万分之一
-            msg = f"账户权益与USDT权益误差较大：" + json.dumps(account_info)
-            self._logger.error(msg)
-            self.send_wechat(self._mail_to, "账户权益与USDT权益误差较大", account_info)
-            raise Exception(msg)
-        free = float(balance['available'])
-        frozen = float(balance['locked']) + float(balance['unrealizedPL']) + float(balance['isolatedMargin']) + float(balance['crossedMargin'])
-        assets_dic = {"free": free, "frozen": frozen, "equity": equity}
-        self._trade_redis.set(self._asset_key, json.dumps(assets_dic), ex=ACCOUNT_REDIS_EXPIRE)
-        return free
 
     def delete_history_log(self):
         time_now = datetime.now()
@@ -337,116 +260,6 @@ class BitgetAccountStatistics(ZMBase):
                 self._logger.error(f"删除文件：{file_path}")
                 os.remove(file_path)
 
-# region 仓位
-
-    def api_get_all_inside_position(self):
-        for _ in range(5):
-            posi = self._position_rest_api.get_position_info_without_symbol()
-            if posi:
-                err_code = posi['code']
-                if err_code == '00000':
-                    return posi
-                self._logger.error(json.dumps(posi))
-                self.send_wechat(self._mail_to, f"仓位接口异常{self._api_user_id}", posi)
-                if err_code == '429':  # 限流了
-                    time.sleep(random.uniform(10, 30))
-                time.sleep(random.uniform(1, 2))
-            else:
-                time.sleep(self._position_cyc_time * 0.5 * 0.001)
-        msg = "站内仓位获取失败"
-        self._logger.error(msg)
-        self.send_wechat(self._mail_to, msg, msg)
-        raise Exception(msg)
-
-    def set_inside_position(self):
-        self._logger.info("开始获取站内仓位")
-        last_time = 0
-        while True:
-            try:
-                last_time = self.process_sleep(last_time, self._position_cyc_time)
-                open_close_dict = self.analysis_open_close_time()
-                posi_data = self.api_get_all_inside_position()
-                # self._logger.info(json.dumps(posi_data))
-                posi_dic = {}
-                posi_list = posi_data['data']
-                for posi in posi_list:
-                    tgt_symbol = posi['symbol']
-                    if not tgt_symbol.endswith('USDT'):
-                        error_msg = f"异常的仓位：{json.dumps(posi)}"
-                        self._logger.error(error_msg)
-                        raise Exception(error_msg)
-                    symbol = tgt_symbol[:-4].lower() + "_usdt"
-                    trade_side = posi['holdSide']
-                    if symbol not in open_close_dict:
-                        open_close_dict[symbol] = {
-                            THIS_POSITION_LONG: {'open_time': DEFAULT_TIME_VAL, 'close_time': DEFAULT_TIME_VAL},
-                            THIS_POSITION_SHORT: {'open_time': DEFAULT_TIME_VAL, 'close_time': DEFAULT_TIME_VAL}
-                        }
-
-                    open_close_time_dic = open_close_dict[symbol][trade_side]
-                    open_time = int(open_close_time_dic['open_time'])
-                    close_time = int(open_close_time_dic['close_time'])
-
-                    posi_val_dic = {'vol': posi['total'], 'locked': posi['locked'], 'price': posi['openPriceAvg'], 'time': int(posi['uTime']), 't_open': open_time, 't_close': close_time}
-                    if symbol not in posi_dic:
-                        posi_dic[symbol] = {trade_side: posi_val_dic}
-                    else:
-                        posi_dic[symbol][trade_side] = posi_val_dic
-
-                self._trade_redis.set(self._position_key, json.dumps(posi_dic), px=POSITION_TIME_OUT_MS)
-            except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest, ConnectionResetError) as e:
-                err_msg = repr(e)
-                self._logger.error(err_msg)
-                self.send_wechat(self._mail_to, f"Inside Position Exception[{self._server}]", err_msg)
-                self._position_rest_api.init_http_connection()
-            except Exception as e:
-                error_info = "%s,%s" % (e, traceback.format_exc())
-                self._logger.info(error_info)
-                self.send_wechat(self._mail_to, f'Inside Position Exception[{self._server}]', error_info)
-                self._position_rest_api.init_http_connection()
-                time.sleep(15)
-
-    def analysis_open_close_time(self):
-        now_time = int(time.time() * 1000)
-        start_time = now_time - 12 * 60 * 1000
-        end_time = now_time + 1 * 60 * 1000
-        result = self._position_rest_api.get_trade_orders_history(end_time, start_time)
-        if result['code'] != '00000':
-            self._logger.error(json.dumps(result))
-            return {}
-        data_list = result['data']['fillList']
-        open_close_dict = {}
-        for data in data_list:
-            symbol = data['symbol'][:-4].lower() + "_usdt"
-            order_side = data['side']
-            trade_side = data['tradeSide']
-            if symbol not in open_close_dict:
-                open_close_dict[symbol] = {
-                    THIS_POSITION_LONG: {'open_time': DEFAULT_TIME_VAL, 'close_time': DEFAULT_TIME_VAL},
-                    THIS_POSITION_SHORT: {'open_time': DEFAULT_TIME_VAL, 'close_time': DEFAULT_TIME_VAL}
-                }
-
-            if trade_side == 'open':
-                if order_side == 'buy':  # 开多
-                    old_time = open_close_dict[symbol][THIS_POSITION_LONG]['open_time']
-                    if old_time == DEFAULT_TIME_VAL:
-                        open_close_dict[symbol][THIS_POSITION_LONG]['open_time'] = data['cTime']
-                else:  # 开空
-                    old_time = open_close_dict[symbol][THIS_POSITION_SHORT]['open_time']
-                    if old_time == DEFAULT_TIME_VAL:
-                        open_close_dict[symbol][THIS_POSITION_SHORT]['open_time'] = data['cTime']
-            else:  # close
-                if order_side == 'buy':  # 平多
-                    old_time = open_close_dict[symbol][THIS_POSITION_LONG]['close_time']
-                    if old_time == DEFAULT_TIME_VAL:
-                        open_close_dict[symbol][THIS_POSITION_LONG]['close_time'] = data['cTime']
-                else:  # 平空
-                    old_time = open_close_dict[symbol][THIS_POSITION_SHORT]['close_time']
-                    if old_time == DEFAULT_TIME_VAL:
-                        open_close_dict[symbol][THIS_POSITION_SHORT]['close_time'] = data['cTime']
-        return open_close_dict
-# endregion
-
     def statistics_account_profit(self):
         # self._statistics_rest_api.asset_transfer(qty=200, type="FUND_PFUTURES")
         try:
@@ -462,10 +275,6 @@ class BitgetAccountStatistics(ZMBase):
             self._logger.info(json.dumps(msg_dic))
             self.send_wechat(self._mail_to, f"ACCOUNT EQUITY[{self._api_user_id}]", msg_dic)
             self.delete_history_log()
-        except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest, ConnectionResetError) as e:
-            err_msg = repr(e)
-            self._logger.error(err_msg)
-            self.send_wechat(self._mail_to, f"Statistics Account Exception[{self._server}]", err_msg)
         except Exception as e:
             error_info = "%s,%s" % (e, traceback.format_exc())
             self._logger.info(error_info)
