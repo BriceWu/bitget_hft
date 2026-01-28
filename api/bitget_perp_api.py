@@ -178,6 +178,12 @@ class BitgetPerpApi(AccountBase):
             path += f"&idLessThan={end_id}"
         return self.http_get(path)
 
+    def get_cash_flow_without_symbol(self, end_time, start_time, repay_id=None):
+        path = f"/api/v2/mix/account/bill?productType=USDT-FUTURES&startTime={start_time}&endTime={end_time}&limit=100"
+        if repay_id:
+            path += f"&idLessThan={repay_id}"
+        return self.http_get(path)
+
 # http 请求
     def http_get(self, path):
         timestamp = str(int(time.time() * 1000))

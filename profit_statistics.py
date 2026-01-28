@@ -6,7 +6,6 @@ import zmqfsi.util.zm_log as zm_log
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 from api.bitget_perp_api import BitgetPerpApi
-import zmqfsi.util.zm_date as zm_date
 
 REBATE = 0.5
 
@@ -20,15 +19,6 @@ class ProfitStatistics(ZMBase):
 
     def start(self):
         self.do_statistics_operation()
-
-    def get_start_end_time(self):
-        time_now = int(time.time())
-        time_str = zm_date.get_local_time(time_now)
-        end_time = time_str[:-5] + "00:00"
-        last_time_str = zm_date.get_local_time((time_now - 60*60))  # 往前推一个小时
-        start_time = last_time_str[:-5] + "00:00"
-        self._logger.info(f"start_time:{start_time}, end_time:{end_time}")
-        return zm_date.get_time_stamp(start_time) * 1000, zm_date.get_time_stamp(end_time) * 1000 - 1
 
     def statistics_profit_data(self, msg_dic):
         time_now = int(time.time() * 1000)
@@ -99,6 +89,33 @@ class ProfitStatistics(ZMBase):
             msg_dic['FundingFee_2d'] = round(funding_fee_2d, 2)
         if trading_profit_liquidation_2d != 0.:
             msg_dic['LiquidationProfit_2d'] = round(trading_profit_liquidation_2d, 2)
+
+    def query_cash_flow(self):
+        end_time = int(time.time() * 1000)
+        start_time = max(end_time - 7 * 24 * 60 * 60 * 1000, 1749798000000)  # 过去7天，纳秒
+        self._logger.info(f"end_time:{end_time}, start_time:{start_time}")
+        trade_rows = []
+
+        row_len = 100
+        end_id = None
+        while row_len==100:
+            time.sleep(1)
+            trades = self._rest_api.get_cash_flow_without_symbol(end_time=end_time, start_time=start_time,repay_id=end_id)
+            if trades is None:
+                time.sleep(3)
+                trades = self._rest_api.get_cash_flow_without_symbol(end_time=end_time, start_time=start_time, repay_id=end_id)
+            if trades is None or trades['code'] != '00000':
+                self._logger.error(trades)
+                self.send_wechat(self._mail_to, "资金流水获取失败", trades)
+                time.sleep(15)
+                raise Exception("资金流水获取失败")
+            data = trades['data']
+            rows = data['bills']
+            row_len = len(rows)
+            self._logger.info(f"资金流水, row_len:{row_len}")
+            trade_rows.extend(rows)
+            end_id = data['endId']
+        return trade_rows
 
     def do_statistics_operation(self):
         statistics_sleep_time = 20*60
