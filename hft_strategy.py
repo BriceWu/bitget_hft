@@ -268,6 +268,12 @@ class HFTStrategy(ZMBase):
             self._logger.error(error_msg)
             raise Exception(error_msg)
         self._logger.info(f"平仓[{self._last_close_price}]：{json.dumps(close_result)}")
+        await asyncio.sleep(0.5)
+        cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
+        if not cancel_result:
+            cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
+        self._logger.info(json.dumps(cancel_result))
+        self.update_close_client_order_id()
         await asyncio.sleep(1.5)
 
     async def analysis_position_info(self):
