@@ -172,6 +172,12 @@ class BitgetPerpApi(AccountBase):
         path = f"/api/v2/mix/position/single-position?productType={PRODUCTTYPE}&symbol={self._format_symbol}&marginCoin={MARGINCOIN}"
         return self.http_get(path)
 
+    def get_trade_orders_history(self, end_time, start_time, end_id=None):
+        path = f"/api/v2/mix/order/fills?productType=USDT-FUTURES&startTime={start_time}&endTime={end_time}"
+        if end_id:
+            path += f"&idLessThan={end_id}"
+        return self.http_get(path)
+
 # http 请求
     def http_get(self, path):
         timestamp = str(int(time.time() * 1000))
