@@ -256,7 +256,7 @@ class HFTStrategy(ZMBase):
             cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
         # self._logger.info(json.dumps(cancel_result))
         self.update_close_client_order_id()
-        await asyncio.sleep(3)
+        await asyncio.sleep(2)
 
     async def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
