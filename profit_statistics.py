@@ -6,6 +6,7 @@ import zmqfsi.util.zm_log as zm_log
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
 from api.bitget_perp_api import BitgetPerpApi
+from datetime import datetime
 
 REBATE = 0.5
 
@@ -20,7 +21,7 @@ class ProfitStatistics(ZMBase):
     def start(self):
         self.do_statistics_operation()
 
-    def statistics_profit_data(self):
+    def statistics_profit_data(self, msg_dic):
         time_now = int(time.time() * 1000)
         rows_item = self.query_cash_flow()
         trading_fee = 0.
@@ -71,7 +72,6 @@ class ProfitStatistics(ZMBase):
                 trading_profit_liquidation_2d = trading_profit_liquidation
                 trading_profit_long_2d = trading_profit_long
                 trading_profit_short_2d = trading_profit_short
-        msg_dic = {}
         msg_dic['LongProfit'] = round(trading_profit_long, 2)
         msg_dic['ShortProfit'] = round(trading_profit_short, 2)
         msg_dic['TradingFee'] = trading_fee
@@ -122,15 +122,35 @@ class ProfitStatistics(ZMBase):
         last_time = 0
         while True:
             try:
-                last_time = self.process_sleep(last_time, cyc_time=statistics_sleep_time)
+                last_time = self.pace_cycle(last_time, cyc_time=statistics_sleep_time)
+                msg_dic = {}
                 self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
-                self.statistics_profit_data()
+                self.statistics_profit_data(msg_dic)
+                self._logger.info(json.dumps(msg_dic))
+                self.send_wechat(self._mail_to, "ProfitStatistics", msg_dic)
+                self.delete_history_log()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.info(error_info)
-                self.send_wechat(self._mail_to, f'Account Equity Exception[{self._server}]', error_info)
-                self._this_rest_api.init_http_connection()
+                self.send_wechat(self._mail_to, 'ProfitStatistics Exception', error_info)
                 time.sleep(15)
+
+    def delete_history_log(self):
+        time_now = datetime.now()
+        if time_now.hour != 7:  # utc时间
+            return
+        if time_now.minute >= 20:  # 15点 ~ 15点20分 执行
+            return
+        directory = 'log'
+        files = os.listdir(directory)
+        for file in files:
+            split_names = file.split(".")
+            if split_names[-2] != 'log':
+                continue
+            file_path = os.path.join(directory, file)
+            if os.path.isfile(file_path):
+                self._logger.error(f"删除文件：{file_path}")
+                os.remove(file_path)
 
 
 if __name__ == "__main__":
