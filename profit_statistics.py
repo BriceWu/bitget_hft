@@ -5,7 +5,7 @@ from sys import argv
 import zmqfsi.util.zm_log as zm_log
 from zmqfsi.service.zm_base import ZMBase
 from zmqfsi.util.zm_env import RunEnv
-sys.path.append(sys.path[0])
+from api.bitget_perp_api import BitgetPerpApi
 
 REBATE = 0.5
 
@@ -15,10 +15,9 @@ class ProfitStatistics(ZMBase):
         self._symbol = symbol
         self._mark = mark
         self._logger = zm_log.get_log(f"{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}_{self._mark}_bitget")
-        self._this_rest_api = None
+        self._rest_api = None
 
     def start(self):
-        self.init_params()
         self.do_statistics_operation()
 
     def do_statistics_operation(self):
@@ -27,6 +26,7 @@ class ProfitStatistics(ZMBase):
         while True:
             try:
                 last_time = self.process_sleep(last_time, cyc_time=statistics_sleep_time)
+                self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
                 self.statistics_account_profit()
             except Exception as e:
                 error_info = "%s,%s" % (e, traceback.format_exc())
