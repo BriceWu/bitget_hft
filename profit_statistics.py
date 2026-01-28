@@ -133,7 +133,8 @@ class ProfitStatistics(ZMBase):
                 error_info = "%s,%s" % (e, traceback.format_exc())
                 self._logger.info(error_info)
                 self.send_wechat(self._mail_to, 'ProfitStatistics Exception', error_info)
-                time.sleep(15)
+                time.sleep(60)
+                last_time = 0.
 
     def delete_history_log(self):
         time_now = datetime.now()
