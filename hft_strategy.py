@@ -13,7 +13,6 @@ from volume_monitor import VolumeMonitor
 from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
 from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
-from zmqfsi.model.number import POSITIVE_ZERO
 
 ORDER_AMOUNT = 15
 
