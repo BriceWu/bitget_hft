@@ -53,7 +53,7 @@ class HFTStrategy(ZMBase):
         self.sum_bitget_sell = 0.
         self.sum_bitget_buy = 0.
         self._last_price_list_update_time = 0
-        self._price_rate_update_interval = 150
+        self._price_rate_update_interval = 90
         self._bb_price_list_max_len = int(1 * 60 * 60 / self._price_rate_update_interval)
 
         self._order_vol = None
