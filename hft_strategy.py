@@ -126,7 +126,8 @@ class HFTStrategy(ZMBase):
                 if self._bn_price_changed and (self._have_placed_order == 0.) and (self.v_volume_rate.value >1.) and len(self._bb_price_list) > 3:
                     if (0.2 > self.v_trade_side.value >= 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate):
                         self._have_placed_order = last_time
-                        self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
+                        open_result = self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
+                        self._logger.info(json.dumps(open_result))
                         self.update_close_client_order_id()
                         self._last_close_price = 0.
                         self._logger.info(f"开空:{self._bitget_bid_one} BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
@@ -134,7 +135,8 @@ class HFTStrategy(ZMBase):
                         await self.cancel_client_order()
                     elif (self.v_trade_side.value > 0.8) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate):
                         self._have_placed_order = last_time
-                        self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
+                        open_result = self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
+                        self._logger.info(json.dumps(open_result))
                         self.update_close_client_order_id()
                         self._last_close_price = sys.maxsize
                         self._logger.info(f"开多：{self._bitget_ask_one} BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
