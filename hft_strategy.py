@@ -250,7 +250,8 @@ class HFTStrategy(ZMBase):
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
             raise Exception(error_msg)
-        self._logger.info(f"平仓[{self._last_close_price}]：{json.dumps(close_result)}")
+        # self._logger.info(f"平仓[{self._last_close_price}]：{json.dumps(close_result)}")
+        self.analysis_close_position_result(close_result)
         await asyncio.sleep(0.3)
         cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
         if not cancel_result:
