@@ -259,6 +259,16 @@ class HFTStrategy(ZMBase):
         self.update_close_client_order_id()
         await asyncio.sleep(1.5)
 
+    def analysis_close_position_result(self, result):
+        if result is None:
+            self._logger.error("平仓结果为空")
+            return
+        code = result['code']
+        if code == '00000':
+            return
+        self._logger.error("平仓异常：" + json.dumps(result))
+        self.send_wechat(self._mail_to, "平仓异常", result)
+
     async def analysis_position_info(self):
         positon_info = self._rest_api.get_position_info()
         # self._logger.info(json.dumps(positon_info))
