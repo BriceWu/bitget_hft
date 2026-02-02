@@ -124,7 +124,7 @@ class HFTStrategy(ZMBase):
                 self.analysis_bitget_ws_one()
                 self.analysis_bn_bs_one()
                 if self._bn_price_changed and (self._have_placed_order == 0.) and (self.v_volume_rate.value >1.) and len(self._bb_price_list) > 3:
-                    if (0.2 > self.v_trade_side.value >= 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate):
+                    if (0.3 > self.v_trade_side.value >= 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate):
                         self._have_placed_order = last_time
                         open_result = self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
                         self._logger.info(json.dumps(open_result))
@@ -133,7 +133,7 @@ class HFTStrategy(ZMBase):
                         self._logger.info(f"开空:{self._bitget_bid_one} BN ask:{self._bn_ask_one}, bid:{self._bn_bid_one}, Bitget ask:{self._bitget_ask_one}, bid:{self._bitget_bid_one}")
                         self.send_wechat(self._mail_to, "HFT开空", self._bitget_bid_one)
                         await self.cancel_client_order()
-                    elif (self.v_trade_side.value > 0.8) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate):
+                    elif (self.v_trade_side.value > 0.7) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate):
                         self._have_placed_order = last_time
                         open_result = self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
                         self._logger.info(json.dumps(open_result))
@@ -221,7 +221,7 @@ class HFTStrategy(ZMBase):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
-        if time.time() - self._have_placed_order < 2.5*60:  # 2min
+        if time.time() - self._have_placed_order < 4.5*60:  # 2min
             return
         posi_vol, posi_side = await self.analysis_position_info()
         if posi_vol is None:
