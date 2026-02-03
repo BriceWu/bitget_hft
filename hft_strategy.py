@@ -209,6 +209,7 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = f"{self._coin}{int(time.time()*1000)}"
 
     async def cancel_client_order(self):
+        await asyncio.sleep(3)
         for _ in range(2):
             await asyncio.sleep(1)
             result = self._rest_api.cancel_order(self._client_open_order_id)
