@@ -263,7 +263,7 @@ class HFTStrategy(ZMBase):
 
     async def dormant_after_closing_position(self):
         """
-        平仓后休眠 5min
+        平仓后休眠 4min (之前是2min)
         :return:
         """
         await asyncio.sleep(60)
