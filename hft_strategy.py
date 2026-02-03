@@ -273,8 +273,6 @@ class HFTStrategy(ZMBase):
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
         await asyncio.sleep(60)
-        await self._bitget_ws_api.ws_client.send("ping")
-        await asyncio.sleep(60)
 
     def analysis_close_position_result(self, result):
         if result is None:
