@@ -231,9 +231,7 @@ class HFTStrategy(ZMBase):
         if posi_vol == '0':
             self._logger.info("当前没有持仓")
             self._have_placed_order = 0.
-            await asyncio.sleep(60)
-            await self._bitget_ws_api.ws_client.send("ping")
-            await asyncio.sleep(60)
+            await self.dormant_after_closing_position()
             return
         if posi_side == 1:
             # if self._last_close_price <= self._bitget_ask_one:
@@ -262,6 +260,21 @@ class HFTStrategy(ZMBase):
         # self._logger.info(json.dumps(cancel_result))
         self.update_close_client_order_id()
         await asyncio.sleep(1.5)
+
+    async def dormant_after_closing_position(self):
+        """
+        平仓后休眠 5min
+        :return:
+        """
+        await asyncio.sleep(60)
+        await self._bitget_ws_api.ws_client.send("ping")
+        await asyncio.sleep(60)
+        await self._bitget_ws_api.ws_client.send("ping")
+        await asyncio.sleep(60)
+        await self._bitget_ws_api.ws_client.send("ping")
+        await asyncio.sleep(60)
+        await self._bitget_ws_api.ws_client.send("ping")
+        await asyncio.sleep(60)
 
     def analysis_close_position_result(self, result):
         if result is None:
