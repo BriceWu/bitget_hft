@@ -33,8 +33,8 @@ class HFTStrategyTWO(HFTStrategy):
             else:
                 new_price = max(self.ceil(avg_price * (1 + self.get_profit_ratio(delta_time)), self._post_accuracy), self._bitget_ask_one)
                 if new_price >= self._last_close_price:
-                    self._logger.info(f"上一轮平仓价：{self._last_close_price} <= 新的平仓价：{new_price}")
-                    await asyncio.sleep(0.3)
+                    self._logger.info(f"多单, 上一轮平仓价：{self._last_close_price} <= 新的平仓价：{new_price}")
+                    await asyncio.sleep(1)
                     return
                 else:
                     close_result = self._rest_api.make_close_order(p_price=new_price, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
@@ -46,6 +46,10 @@ class HFTStrategyTWO(HFTStrategy):
                 self._last_close_price = self._bitget_bid_one
             else:
                 new_price = min(self.floor(avg_price * (1 - self.get_profit_ratio(delta_time)), self._post_accuracy), self._bitget_bid_one)
+                if new_price <= self._last_close_price:
+                    self._logger.info(f"空单, 上一轮平仓价：{self._last_close_price} >= 新的平仓价:{new_price}")
+                    await asyncio.sleep(1)
+                    return # 本次的价格并不优
         else:
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
