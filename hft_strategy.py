@@ -4,22 +4,14 @@ from sys import argv
 import time, json
 import traceback, socket, http.client, os, sys, asyncio, orjson
 from zmqfsi.util.zm_client import ZMClient
-from multiprocessing import Process, Value
 from zmqfsi.service.zm_base import ZMBase
-from zmqfsi.util.zm_env import RunEnv
 import zmqfsi.util.zm_log as zm_log
 
-from volume_monitor import VolumeMonitor
 from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
 from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
 
 ORDER_AMOUNT = 15
-
-def __volume_monitor(env, symbol, volume_rate, trade_side):
-    RunEnv.set_run_env(env)
-    vm = VolumeMonitor(symbol, volume_rate, trade_side)
-    vm.start()
 
 
 class HFTStrategy(ZMBase):
@@ -332,16 +324,3 @@ class HFTStrategy(ZMBase):
     def update_close_client_order_id(self):
         self._client_close_order_id = f"{self._coin}{int(time.time()*1000)}c"
 
-
-if __name__ == '__main__':
-    RunEnv.set_run_env(argv[1])
-    _env = RunEnv.get_run_env()
-    _symbol = argv[2]
-    _mark = "xyz369free"
-    v_trade_side = Value('d', 0)
-    v_volume_rate = Value('d', 0)
-    Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
-    loop = asyncio.SelectorEventLoop()
-    asyncio.set_event_loop(loop)
-    active = HFTStrategy(_symbol, _mark, v_volume_rate, v_trade_side)
-    loop.run_until_complete(active.run_tasks())
