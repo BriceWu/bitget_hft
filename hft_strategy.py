@@ -51,7 +51,8 @@ class HFTStrategy(ZMBase):
         self._client_open_order_id = None
         self._client_close_order_id = None
 
-        self._pre_accuracy = 5
+        self._pre_accuracy = 0
+        self._post_accuracy = 5
         self._have_placed_order = 0.  # 下开仓单
 
         self._last_close_price = None
