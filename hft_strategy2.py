@@ -59,10 +59,14 @@ class HFTStrategyTWO(HFTStrategy):
             self._logger.error(error_msg)
             raise Exception(error_msg)
         self.analysis_close_position_result(close_result)
-        await asyncio.sleep(0.3)
-        cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
-        if not cancel_result:
+        if delta_time > self._close_position_delta_time:
+            await asyncio.sleep(0.3)
             cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
+            if not cancel_result:
+                cancel_result = self._rest_api.cancel_order(self._client_close_order_id)
+        else:  # 没到 close_position_delta_time
+            await asyncio.sleep(2)
+
         self.update_close_client_order_id()
         await asyncio.sleep(1.5)
 
