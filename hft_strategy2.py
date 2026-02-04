@@ -50,3 +50,7 @@ class HFTStrategyTWO(HFTStrategy):
         self.update_close_client_order_id()
         await asyncio.sleep(1.5)
 
+    def get_profit_ratio(self, delta_time):
+        rate = min(delta_time / self._close_position_delta_time, 1)
+        return 0.02 - 0.018 * rate
+
