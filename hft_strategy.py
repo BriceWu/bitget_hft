@@ -56,6 +56,8 @@ class HFTStrategy(ZMBase):
 
         self._last_close_price = None
 
+        self._close_position_delta_time = 4.5 * 60
+
     def init_params(self):
         try:
             self._coin = self._symbol.split("_")[0]
@@ -213,7 +215,7 @@ class HFTStrategy(ZMBase):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
-        if time.time() - self._have_placed_order < 4.5*60:  # 2min
+        if time.time() - self._have_placed_order < self._close_position_delta_time:
             return
         posi_vol, posi_side = await self.analysis_position_info()
         if posi_vol is None:
