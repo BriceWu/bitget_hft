@@ -50,6 +50,10 @@ class HFTStrategyTWO(HFTStrategy):
                     self._logger.info(f"空单, 上一轮平仓价：{self._last_close_price} >= 新的平仓价:{new_price}")
                     await asyncio.sleep(1)
                     return # 本次的价格并不优
+                else:
+                    close_result = self._rest_api.make_close_order(p_price=new_price, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
+                    self._last_close_price = new_price
+
         else:
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
