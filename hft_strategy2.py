@@ -26,13 +26,13 @@ class HFTStrategyTWO(HFTStrategy):
             self._have_placed_order = 0.
             await self.dormant_after_closing_position()
             return
-        if posi_side == 1:
+        if posi_side == 1:  # 做多
             if delta_time > self._close_position_delta_time:
                 close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
                 self._last_close_price = self._bitget_ask_one
             else:
                 pass
-        elif posi_side == -1:
+        elif posi_side == -1:  # 做空
             if delta_time > self._close_position_delta_time:
                 close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
                 self._last_close_price = self._bitget_bid_one
