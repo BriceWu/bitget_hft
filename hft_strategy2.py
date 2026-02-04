@@ -14,7 +14,8 @@ class HFTStrategyTWO(HFTStrategy):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
-        if time.time() - self._have_placed_order < 10:
+        t_now = time.time()
+        if t_now - self._have_placed_order < 10:
             return
         posi_vol, posi_side = await self.analysis_position_info()
         if posi_vol is None:
