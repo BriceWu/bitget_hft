@@ -32,8 +32,10 @@ class HFTStrategyTWO(HFTStrategy):
                 self._last_close_price = self._bitget_ask_one
             else:
                 new_price = max(self.ceil(avg_price * (1 + self.get_profit_ratio(delta_time)), self._post_accuracy), self._bitget_ask_one)
-                if new_price > self._last_close_price:
-                    pass
+                if new_price >= self._last_close_price:
+                    self._logger.info(f"上一轮平仓价：{self._last_close_price} <= 新的平仓价：{new_price}")
+                    await asyncio.sleep(0.3)
+                    return
                 else:
                     close_result = self._rest_api.make_close_order(p_price=new_price, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
                     self._last_close_price = new_price
