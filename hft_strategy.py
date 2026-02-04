@@ -23,7 +23,7 @@ class HFTStrategy(ZMBase):
         self._symbol = symbol
         self._coin = None
         self._mark = mark
-        self._logger = zm_log.get_log(f'{os.path.basename(sys.argv[0])[:-3]}_{self._symbol}_{self._mark}')
+        self._logger = zm_log.get_log(f'hft_strategy_{self._symbol}_{self._mark}')
         self.v_volume_rate = volume_rate
         self.v_trade_side = trade_side
         self._bn_ws_api = None
