@@ -16,6 +16,14 @@ def __hft_strategy1(env, symbol, volume_rate, trade_side):
     active = HFTStrategy(symbol, _mark, volume_rate, trade_side)
     loop.run_until_complete(active.run_tasks())
 
+def __hft_strategy2(env, symbol, volume_rate, trade_side):
+    RunEnv.set_run_env(env)
+    loop = asyncio.SelectorEventLoop()
+    asyncio.set_event_loop(loop)
+    _mark = "itbricewu"
+    active = HFTStrategy(symbol, _mark, volume_rate, trade_side)
+    loop.run_until_complete(active.run_tasks())
+
 if __name__ == '__main__':
     RunEnv.set_run_env(argv[1])
     _env = RunEnv.get_run_env()
@@ -25,5 +33,6 @@ if __name__ == '__main__':
     v_volume_rate = Value('d', 0)
 
     Process(target=__hft_strategy1, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
+    Process(target=__hft_strategy2, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
     vm = VolumeMonitor(_symbol, v_volume_rate, v_trade_side)
     vm.start()
