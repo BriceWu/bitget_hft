@@ -13,7 +13,7 @@ from api.bitget_perp_api import BitgetPerpApi
 ORDER_AMOUNT = 15
 
 
-class HFTStrategy(ZMBase):
+class HFTStrategyTWO(ZMBase):
     def __init__(self, symbol, mark, volume_rate, trade_side):
         """
         初始化
