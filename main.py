@@ -6,13 +6,7 @@ from multiprocessing import Process, Value
 from zmqfsi.util.zm_env import RunEnv
 
 from volume_monitor import VolumeMonitor
-
 from hft_strategy import HFTStrategy
-
-def __volume_monitor(env, symbol, volume_rate, trade_side):
-    RunEnv.set_run_env(env)
-    vm = VolumeMonitor(symbol, volume_rate, trade_side)
-    vm.start()
 
 def __hft_strategy1(env, symbol, volume_rate, trade_side):
     RunEnv.set_run_env(env)
@@ -29,4 +23,7 @@ if __name__ == '__main__':
 
     v_trade_side = Value('d', 0)
     v_volume_rate = Value('d', 0)
-    Process(target=__volume_monitor, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
+
+    Process(target=__hft_strategy1, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
+    vm = VolumeMonitor(_symbol, v_volume_rate, v_trade_side)
+    vm.start()
