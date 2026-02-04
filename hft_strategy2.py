@@ -37,7 +37,7 @@ class HFTStrategyTWO(HFTStrategy):
                 close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
                 self._last_close_price = self._bitget_bid_one
             else:
-                pass
+                new_price = avg_price * (1 - self.get_profit_ratio(delta_time))
         else:
             error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
