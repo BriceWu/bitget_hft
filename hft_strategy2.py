@@ -26,7 +26,7 @@ class HFTStrategyTWO(HFTStrategy):
             self._have_placed_order = 0.
             await self.dormant_after_closing_position()
             return
-        if posi_side == 1:  # 做多
+        if self._open_position_side == 1:  # 做多
             if delta_time > self._close_position_delta_time:
                 close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
                 self._last_close_price = self._bitget_ask_one
@@ -40,7 +40,7 @@ class HFTStrategyTWO(HFTStrategy):
                     close_result = self._rest_api.make_close_order(p_price=new_price, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
                     self._last_close_price = new_price
 
-        elif posi_side == -1:  # 做空
+        elif self._open_position_side == -1:  # 做空
             if delta_time > self._close_position_delta_time:
                 close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
                 self._last_close_price = self._bitget_bid_one
@@ -55,7 +55,7 @@ class HFTStrategyTWO(HFTStrategy):
                     self._last_close_price = new_price
 
         else:
-            error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
+            error_msg = f"异常的仓位方向:{self._open_position_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
             raise Exception(error_msg)
         self.analysis_close_position_result(close_result)
