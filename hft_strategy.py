@@ -224,7 +224,7 @@ class HFTStrategy(ZMBase):
             return # 没有下单, 没有仓位
         if time.time() - self._have_placed_order < self._close_position_delta_time:
             return
-        posi_side, posi_vol, _, _ = await self.analysis_position_info()
+        posi_vol, _ = await self.analysis_position_info()
         if posi_vol is None:
             await asyncio.sleep(0.1)
             return
@@ -316,7 +316,7 @@ class HFTStrategy(ZMBase):
     async def check_position(self):
         while True:
             try:
-                posi_side, posi_vol, _, _ = await self.analysis_position_info()
+                posi_vol, _ = await self.analysis_position_info()
                 if posi_vol is None:
                     self._logger.error(f"获取[{self._symbol}]失败")
                     await asyncio.sleep(0.5)
