@@ -71,7 +71,7 @@ class HFTStrategy(ZMBase):
             self._bb_price_list = []
             ZMClient.set('logger', self._logger)
             self._rest_api = BitgetPerpApi(self._symbol, self._mark, self._logger)
-            self.init_api_config(40)
+            self.init_api_config(50)
             if self._run_env == 'test':
                 import socks, socket
                 socks.set_default_proxy(socks.HTTP, "127.0.0.1", 10809)  # 设置全局代理
