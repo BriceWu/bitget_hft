@@ -233,14 +233,14 @@ class HFTStrategy(ZMBase):
             self._have_placed_order = 0.
             await self.dormant_after_closing_position()
             return
-        if posi_side == 1:
+        if self._open_position_side == 1:
             # if self._last_close_price <= self._bitget_ask_one:
             #     self._logger.info(f"上一轮平仓价：{self._last_close_price} <= 卖一价：{self._bitget_ask_one}")
             #     await asyncio.sleep(0.3)
             #     return # 本次的价格并不优
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
             self._last_close_price = self._bitget_ask_one
-        elif posi_side == -1:
+        elif self._open_position_side == -1:
             # if self._last_close_price >= self._bitget_bid_one:
             #     self._logger.info(f"上一轮平仓价：{self._last_close_price} >= 买一价{self._bitget_bid_one}")
             #     await asyncio.sleep(0.3)
@@ -248,7 +248,7 @@ class HFTStrategy(ZMBase):
             close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
             self._last_close_price = self._bitget_bid_one
         else:
-            error_msg = f"异常的仓位方向:{posi_side}, 持仓量:{posi_vol}"
+            error_msg = f"异常的仓位方向:{self._open_position_side}, 持仓量:{posi_vol}"
             self._logger.error(error_msg)
             raise Exception(error_msg)
         # self._logger.info(f"平仓[{self._last_close_price}]：{json.dumps(close_result)}")
