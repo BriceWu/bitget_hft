@@ -222,7 +222,8 @@ class HFTStrategy(ZMBase):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
-        await self.start_stop_loss()
+        if await self.start_stop_loss():
+            return   # 止损
         if time.time() - self._have_placed_order < self._close_position_delta_time:
             return
         posi_vol, _ = await self.analysis_position_info()
