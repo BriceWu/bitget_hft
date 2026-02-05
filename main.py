@@ -33,7 +33,7 @@ if __name__ == '__main__':
     v_trade_side = Value('d', 0)
     v_volume_rate = Value('d', 0)
 
-    Process(target=__hft_strategy1, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
+    # Process(target=__hft_strategy1, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
     Process(target=__hft_strategy2, args=(_env, _symbol, v_volume_rate, v_trade_side)).start()
     vm = VolumeMonitor(_symbol, v_volume_rate, v_trade_side)
     vm.start()
