@@ -108,12 +108,12 @@ class HFTStrategy(ZMBase):
             try:
                 last_time = await self.pace_cycle_async(last_time, cyc_time=0.004)  # 4ms
                 if (last_bn_update_id == self._bn_ws_api.update_id) or (self._bitget_ws_api.update_id == -1):
-                    if time.time() - self._bitget_ws_api.last_ping_time > 30:  # 30s ping一次
+                    if last_time - self._bitget_ws_api.last_ping_time > 30:  # 30s ping一次
                         await self._bitget_ws_api.ws_client.send("ping")
                         self._logger.info("发送ping")
-                        self._bitget_ws_api.last_ping_time = time.time()
+                        self._bitget_ws_api.last_ping_time = last_time
                     continue
-                if time.time() - self._bitget_ws_api.update_id > 180: # 3min没有更新
+                if last_time - self._bitget_ws_api.update_id > 180: # 3min没有更新
                     self.send_wechat(self._mail_to, 'Bitget数据长时间未更新', self._bitget_ws_api.update_id)
                     # 重建http连接
                     await asyncio.sleep(10)
