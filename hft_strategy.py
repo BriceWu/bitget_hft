@@ -289,21 +289,21 @@ class HFTStrategy(ZMBase):
         # self._logger.info(json.dumps(positon_info))
         if not positon_info:
             self._logger.error("获取交易对仓位失败......")
-            return 1, None, None, None
+            return None, None
 
         posi_code = positon_info['code']
         if posi_code == '429':  # 限流
             await asyncio.sleep(1)
-            return 1, None, None, None
+            return None, None
 
         if posi_code != '00000':
             self.send_wechat(self._mail_to, "仓位接口异常", positon_info)
             await asyncio.sleep(3)
-            return 1, None, None, None
+            return None, None
 
         data = positon_info['data']
         if data == []:
-            return 1, '0', '0', '0'
+            return '0', '0'
         position = data[0]
         self._open_position_price = float(position['openPriceAvg'])
         if position['holdSide'] == 'long':
