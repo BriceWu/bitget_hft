@@ -197,7 +197,7 @@ class HFTStrategy(ZMBase):
         self.sum_bitget_buy += self._bitget_bid_one
 
         self._bb_price_list.append((self._bn_ask_one, self._bn_bid_one, self._bitget_ask_one, self._bitget_bid_one))
-        self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
+        # self._logger.info(f"价格列表长度：{len(self._bb_price_list)}")
 
         self._sell_profit_rate = self.sum_bn_sell / self.sum_bitget_buy
         self._buy_profit_rate = self.sum_bn_buy / self.sum_bitget_sell
