@@ -282,8 +282,14 @@ class HFTStrategy(ZMBase):
         stop_loss_rate = 0.005
         if self._open_position_side == 1:  # long
             stop_loss_price = self._open_position_price * (1 - stop_loss_rate)
+            if stop_loss_price < self._bitget_ask_one:
+                return
+            # 开始止损
         elif self._open_position_side == -1:  # short
             stop_loss_price = self._open_position_price * (1 + stop_loss_rate)
+            if stop_loss_price > self._bitget_bid_one:
+                return
+            # 开始止损
 
     def analysis_close_position_result(self, result):
         if result is None:
