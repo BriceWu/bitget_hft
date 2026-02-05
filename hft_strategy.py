@@ -110,6 +110,7 @@ class HFTStrategy(ZMBase):
                 if (last_bn_update_id == self._bn_ws_api.update_id) or (self._bitget_ws_api.update_id == -1):
                     if time.time() - self._bitget_ws_api.last_ping_time > 30:  # 30s ping一次
                         await self._bitget_ws_api.ws_client.send("ping")
+                        self._logger.info("发送ping")
                         self._bitget_ws_api.last_ping_time = time.time()
                     continue
                 if time.time() - self._bitget_ws_api.update_id > 180: # 3min没有更新
@@ -270,10 +271,13 @@ class HFTStrategy(ZMBase):
         """
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
+        self._logger.info("发送ping")
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
+        self._logger.info("发送ping")
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
+        self._logger.info("发送ping")
         await asyncio.sleep(60)
 
     async def start_stop_loss(self):
