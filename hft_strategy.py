@@ -123,6 +123,8 @@ class HFTStrategy(ZMBase):
                     if (0.3 > self.v_trade_side.value >= 0.) and (self._bn_ask_one / self._bitget_bid_one < self._sell_profit_rate):
                         self._have_placed_order = last_time
                         open_result = self._rest_api.make_open_order(p_price=self._bitget_bid_one, p_vol=self._order_vol, p_side="sell", p_client_id=self._client_open_order_id)
+                        self._open_position_price = self._bitget_bid_one
+                        self._open_position_side = -1  # sell
                         self._logger.info(json.dumps(open_result))
                         self.update_close_client_order_id()
                         self._last_close_price = 0.
@@ -132,6 +134,8 @@ class HFTStrategy(ZMBase):
                     elif (self.v_trade_side.value > 0.7) and (self._bn_bid_one / self._bitget_ask_one > self._buy_profit_rate):
                         self._have_placed_order = last_time
                         open_result = self._rest_api.make_open_order(p_price=self._bitget_ask_one, p_vol=self._order_vol, p_side="buy", p_client_id=self._client_open_order_id)
+                        self._open_position_price = self._bitget_ask_one
+                        self._open_position_side = 1  # buy
                         self._logger.info(json.dumps(open_result))
                         self.update_close_client_order_id()
                         self._last_close_price = sys.maxsize
