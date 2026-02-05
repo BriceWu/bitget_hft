@@ -14,6 +14,8 @@ class HFTStrategyTWO(HFTStrategy):
         """
         if self._have_placed_order == 0.:
             return # 没有下单, 没有仓位
+        if await self.start_stop_loss():
+            return   # 止损
         delta_time = time.time() - self._have_placed_order
         if delta_time < 10:
             return
