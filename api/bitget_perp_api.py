@@ -96,6 +96,18 @@ class BitgetPerpApi(AccountBase):
         body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"isolated","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","force":"post_only","reduceOnly":"YES","clientOid":"{p_client_id}"}}'
         return self.http_post("/api/v2/mix/order/place-order", body)
 
+    def make_stop_loss_order(self, p_price, p_vol, p_side, p_client_id):
+        """
+        止损
+        :param p_price:
+        :param p_vol:
+        :param p_side:
+        :param p_client_id:
+        :return:
+        """
+        body = f'{{"symbol":"{self._format_symbol}","productType":"USDT-FUTURES","marginMode":"isolated","marginCoin":"USDT","size":{p_vol},"price":"{p_price}","side":"{p_side}","orderType":"limit","reduceOnly":"YES","clientOid":"{p_client_id}"}}'
+        return self.http_post("/api/v2/mix/order/place-order", body)
+
     def cancel_order(self, p_client_id):
         path = "/api/v2/mix/order/cancel-order"
         params = json.dumps({
