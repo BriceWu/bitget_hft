@@ -274,6 +274,17 @@ class HFTStrategy(ZMBase):
         await self._bitget_ws_api.ws_client.send("ping")
         await asyncio.sleep(60)
 
+    def start_stop_loss(self):
+        """
+        开始止损
+        :return:
+        """
+        stop_loss_rate = 0.005
+        if self._open_position_side == 1:  # long
+            stop_loss_price = self._open_position_price * (1 - stop_loss_rate)
+        elif self._open_position_side == -1:  # short
+            stop_loss_price = self._open_position_price * (1 + stop_loss_rate)
+
     def analysis_close_position_result(self, result):
         if result is None:
             self._logger.error("平仓结果为空")
