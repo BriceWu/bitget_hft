@@ -300,9 +300,9 @@ class HFTStrategy(ZMBase):
             return 1, '0', '0', '0'
         position = data[0]
         if position['holdSide'] == 'long':
-            return 1, position['total'], position['openPriceAvg'], position['liquidationPrice']
+            return 1, position['total'], float(position['openPriceAvg']), float(position['liquidationPrice'])
         else:
-            return -1, position['total'], position['openPriceAvg'], position['liquidationPrice']
+            return -1, position['total'], float(position['openPriceAvg']), float(position['liquidationPrice'])
 
     async def check_position(self):
         while True:
