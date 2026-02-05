@@ -304,6 +304,8 @@ class HFTStrategy(ZMBase):
         else:
             return
         self.analysis_close_position_result(close_result)
+        await asyncio.sleep(0.5)
+        return True
 
     def analysis_close_position_result(self, result):
         if result is None:
