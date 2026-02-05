@@ -157,7 +157,7 @@ class ProfitStatistics(ZMBase):
 if __name__ == "__main__":
     RunEnv.set_run_env(argv[1])
     _symbol = argv[2]
-    _mark = "xyz369free"
+    _mark = "itbricewu"
     account = ProfitStatistics(_symbol, _mark)
     account.start()
 
