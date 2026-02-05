@@ -17,7 +17,7 @@ class HFTStrategyTWO(HFTStrategy):
         delta_time = time.time() - self._have_placed_order
         if delta_time < 10:
             return
-        posi_side, posi_vol, avg_price, liq_price = await self.analysis_position_info()
+        posi_vol, liq_price = await self.analysis_position_info()
         if posi_vol is None:
             await asyncio.sleep(0.1)
             return
