@@ -291,7 +291,6 @@ class HFTStrategy(ZMBase):
                 return
             close_result = self._rest_api.make_close_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
             self._last_close_price = self._bitget_bid_one
-            self._logger.error(json.dumps(close_result))
         elif self._open_position_side == -1:  # short
             stop_loss_price = self._open_position_price * (1 + stop_loss_rate)
             if stop_loss_price > self._bitget_bid_one:
@@ -302,6 +301,9 @@ class HFTStrategy(ZMBase):
                 return
             close_result = self._rest_api.make_close_order(p_price=self._bitget_ask_one, p_vol=posi_vol, p_side='buy', p_client_id=self._client_close_order_id)
             self._last_close_price = self._bitget_ask_one
+        else:
+            return
+        self.analysis_close_position_result(close_result)
 
     def analysis_close_position_result(self, result):
         if result is None:
