@@ -145,7 +145,7 @@ class HFTStrategy(ZMBase):
                 self.update_order_vol()
                 if last_time - self._bitget_ws_api.last_ping_time > 30:  # 30s ping一次
                     await self._bitget_ws_api.ws_client.send("ping")
-                    self._logger.info("发送ping")
+                    # self._logger.info("发送ping")
                     self._bitget_ws_api.last_ping_time = last_time
             except (socket.timeout, http.client.RemoteDisconnected, http.client.CannotSendRequest)  as e:
                 err_msg = repr(e)
@@ -271,13 +271,13 @@ class HFTStrategy(ZMBase):
         """
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
-        self._logger.info("发送ping")
+        # self._logger.info("发送ping")
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
-        self._logger.info("发送ping")
+        # self._logger.info("发送ping")
         await asyncio.sleep(60)
         await self._bitget_ws_api.ws_client.send("ping")
-        self._logger.info("发送ping")
+        # self._logger.info("发送ping")
         await asyncio.sleep(60)
 
     async def start_stop_loss(self):
