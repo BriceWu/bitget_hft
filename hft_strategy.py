@@ -303,6 +303,8 @@ class HFTStrategy(ZMBase):
 
         data = positon_info['data']
         if data == []:
+            self._open_position_side = 0
+            self._open_position_price = None
             return '0', '0'
         position = data[0]
         self._open_position_price = float(position['openPriceAvg'])
