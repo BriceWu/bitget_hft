@@ -56,6 +56,8 @@ class HFTStrategy(ZMBase):
         self._have_placed_order = 0.  # 下开仓单
 
         self._last_close_price = None
+        self._open_position_price = None
+        self._open_position_side = None
 
         self._close_position_delta_time = 4.5 * 60
 
