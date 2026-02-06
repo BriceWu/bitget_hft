@@ -313,6 +313,7 @@ class HFTStrategy(ZMBase):
             self._logger.error(f"做多止损, 开仓价：{self._open_position_price}, 止损价：{self._last_close_price}")
         else:
             self._logger.error(f"做空止损, 开仓价：{self._open_position_price}, 止损价：{self._last_close_price}")
+        self.update_close_client_order_id()
         await asyncio.sleep(0.5)
         return True
 
