@@ -10,7 +10,7 @@ from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
 from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
 
-ORDER_AMOUNT = 15
+ORDER_AMOUNT = 5
 
 
 class HFTStrategy(ZMBase):
@@ -206,7 +206,7 @@ class HFTStrategy(ZMBase):
     def update_order_vol(self):
         if self._have_placed_order != 0.:  # 下单了, 则不更新
             return
-        self._order_vol = self.floor(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
+        self._order_vol = self.ceil(ORDER_AMOUNT / self._bn_ask_one, self._pre_accuracy)
         self._client_open_order_id = f"{self._coin}{int(time.time()*1000)}"
 
     async def cancel_client_order(self):
