@@ -8,6 +8,7 @@ from zmqfsi.util.zm_env import RunEnv
 from volume_monitor import VolumeMonitor
 from hft_strategy import HFTStrategy
 from hft_strategy2 import HFTStrategyTWO
+from hft_strategy3 import HFTStrategyTHREE
 
 def __hft_strategy1(env, symbol, volume_rate, trade_side):
     RunEnv.set_run_env(env)
@@ -23,6 +24,14 @@ def __hft_strategy2(env, symbol, volume_rate, trade_side):
     asyncio.set_event_loop(loop)
     _mark = "itbricewu"
     active = HFTStrategyTWO(symbol, _mark, volume_rate, trade_side)
+    loop.run_until_complete(active.run_tasks())
+
+def __hft_strategy3(env, symbol, volume_rate, trade_side):
+    RunEnv.set_run_env(env)
+    loop = asyncio.SelectorEventLoop()
+    asyncio.set_event_loop(loop)
+    _mark = "xyz369free"
+    active = HFTStrategyTHREE(symbol, _mark, volume_rate, trade_side)
     loop.run_until_complete(active.run_tasks())
 
 if __name__ == '__main__':
