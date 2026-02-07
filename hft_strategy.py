@@ -280,12 +280,11 @@ class HFTStrategy(ZMBase):
         # self._logger.info("发送ping")
         await asyncio.sleep(60)
 
-    async def start_stop_loss(self):
+    async def start_stop_loss(self, stop_loss_rate = 0.005):
         """
         开始止损
         :return:
         """
-        stop_loss_rate = 0.005
         if self._open_position_side == 1:  # long
             stop_loss_price = self._open_position_price * (1 - stop_loss_rate)
             if stop_loss_price < self._bitget_ask_one:
