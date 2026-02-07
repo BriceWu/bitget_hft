@@ -281,13 +281,13 @@ class HFTStrategy(ZMBase):
         # self._logger.info("发送ping")
         await asyncio.sleep(60)
 
-    async def start_stop_loss(self, stop_loss_rate = 0.005):
+    async def start_stop_loss(self):
         """
         开始止损
         :return:
         """
         if self._open_position_side == 1:  # long
-            stop_loss_price = self._open_position_price * (1 - stop_loss_rate)
+            stop_loss_price = self._open_position_price * (1 - self._stop_loss_rate)
             if stop_loss_price < self._bitget_ask_one:
                 return False
             # 开始止损
@@ -297,7 +297,7 @@ class HFTStrategy(ZMBase):
             close_result = self._rest_api.make_stop_loss_order(p_price=self._bitget_bid_one, p_vol=posi_vol, p_side='sell', p_client_id=self._client_close_order_id)
             self._last_close_price = self._bitget_bid_one
         elif self._open_position_side == -1:  # short
-            stop_loss_price = self._open_position_price * (1 + stop_loss_rate)
+            stop_loss_price = self._open_position_price * (1 + self._stop_loss_rate)
             if stop_loss_price > self._bitget_bid_one:
                 return False
             # 开始止损
