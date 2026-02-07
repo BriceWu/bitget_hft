@@ -10,7 +10,7 @@ from api.bn_perp_ws_api_async import BinancePerpWSApiAsync
 from api.bitget_perp_ws_api_async import BitgetPerpWSApiAsync
 from api.bitget_perp_api import BitgetPerpApi
 
-ORDER_AMOUNT = 5
+ORDER_AMOUNT = 5.5
 
 
 class HFTStrategy(ZMBase):
