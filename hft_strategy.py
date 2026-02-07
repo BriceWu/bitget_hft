@@ -60,6 +60,7 @@ class HFTStrategy(ZMBase):
         self._open_position_side = None
 
         self._close_position_delta_time = 4.5 * 60
+        self._stop_loss_rate = 0.005
 
     def init_params(self):
         try:
